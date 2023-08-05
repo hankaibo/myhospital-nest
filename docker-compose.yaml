@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:15.3-alpine
+    image: postgis/postgis:15-3.3-alpine
     ports:
       - ${DATABASE_PORT}:5432
     volumes:
@@ -17,12 +17,6 @@ services:
     ports:
       - ${MAIL_CLIENT_PORT}:1080
       - ${MAIL_PORT}:1025
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
 
   # Uncomment to use redis
   # redis:

@@ -16,7 +16,7 @@
 1. Clone repository
 
    ```bash
-   git clone --depth 1 https://github.com/brocoders/nestjs-boilerplate.git my-app
+   git clone --depth 1 https://github.com/hankaibo/myhospital-nest.git my-app
    ```
 
 1. Go to folder, and copy `env-example` as `.env`.
@@ -33,7 +33,7 @@
 1. Run additional container:
 
    ```bash
-   docker compose up -d postgres adminer maildev
+   docker compose up -d postgres maildev
    ```
 
 1. Install dependency
@@ -71,7 +71,7 @@ If you want quick run your app, you can use following commands:
 1. Clone repository
 
    ```bash
-   git clone --depth 1 https://github.com/brocoders/nestjs-boilerplate.git my-app
+   git clone --depth 1 https://github.com/hankaibo/myhospital-nest.git my-app
    ```
 
 1. Go to folder, and copy `env-example` as `.env`.
@@ -104,7 +104,6 @@ If you want quick run your app, you can use following commands:
 ## Links
 
 - Swagger (API docs): <http://localhost:3000/docs>
-- Adminer (client for DB): <http://localhost:8080>
 - Maildev: <http://localhost:1080>
 
 ---

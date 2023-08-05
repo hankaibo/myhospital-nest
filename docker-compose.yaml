@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgis/postgis:15-3.3-alpine
+    container_name: a-map-postgis
     ports:
       - ${DATABASE_PORT}:5432
     volumes:
@@ -14,6 +15,7 @@ services:
     build:
       context: .
       dockerfile: maildev.Dockerfile
+    container_name: a-map-maildev
     ports:
       - ${MAIL_CLIENT_PORT}:1080
       - ${MAIL_PORT}:1025
@@ -28,5 +30,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: a-map-api
     ports:
       - ${APP_PORT}:${APP_PORT}

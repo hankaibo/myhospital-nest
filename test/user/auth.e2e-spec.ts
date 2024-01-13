@@ -31,20 +31,6 @@ describe('Auth user (e2e)', () => {
       });
   });
 
-  it('Login via admin endpoint: /api/v1/auth/admin/email/login (POST)', () => {
-    return request(app)
-      .post('/api/v1/auth/admin/email/login')
-      .send({ email: TESTER_EMAIL, password: TESTER_PASSWORD })
-      .expect(422);
-  });
-
-  it('Login via admin endpoint with extra spaced: /api/v1/auth/admin/email/login (POST)', () => {
-    return request(app)
-      .post('/api/v1/auth/admin/email/login')
-      .send({ email: TESTER_EMAIL + '  ', password: TESTER_PASSWORD })
-      .expect(422);
-  });
-
   it('Do not allow register user with exists email: /api/v1/auth/email/register (POST)', () => {
     return request(app)
       .post('/api/v1/auth/email/register')
@@ -92,9 +78,9 @@ describe('Auth user (e2e)', () => {
               (letter) =>
                 letter.to[0].address.toLowerCase() ===
                   newUserEmail.toLowerCase() &&
-                /.*confirm\-email\/(\w+).*/g.test(letter.text),
+                /.*confirm\-email\?hash\=(\S+).*/g.test(letter.text),
             )
-            ?.text.replace(/.*confirm\-email\/(\w+).*/g, '$1'),
+            ?.text.replace(/.*confirm\-email\?hash\=(\S+).*/g, '$1'),
       );
 
     return request(app)
@@ -115,9 +101,9 @@ describe('Auth user (e2e)', () => {
               (letter) =>
                 letter.to[0].address.toLowerCase() ===
                   newUserEmail.toLowerCase() &&
-                /.*confirm\-email\/(\w+).*/g.test(letter.text),
+                /.*confirm\-email\?hash\=(\S+).*/g.test(letter.text),
             )
-            ?.text.replace(/.*confirm\-email\/(\w+).*/g, '$1'),
+            ?.text.replace(/.*confirm\-email\?hash\=(\S+).*/g, '$1'),
       );
 
     return request(app)

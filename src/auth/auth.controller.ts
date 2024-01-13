@@ -21,8 +21,8 @@ import { AuthUpdateDto } from './dto/auth-update.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { LoginResponseType } from './types/login-response.type';
-import { User } from '../users/entities/user.entity';
 import { NullableType } from '../utils/types/nullable.type';
+import { User } from 'src/users/domain/user';
 
 @ApiTags('Auth')
 @Controller({
@@ -40,18 +40,7 @@ export class AuthController {
   public login(
     @Body() loginDto: AuthEmailLoginDto,
   ): Promise<LoginResponseType> {
-    return this.service.validateLogin(loginDto, false);
-  }
-
-  @SerializeOptions({
-    groups: ['me'],
-  })
-  @Post('admin/email/login')
-  @HttpCode(HttpStatus.OK)
-  public adminLogin(
-    @Body() loginDTO: AuthEmailLoginDto,
-  ): Promise<LoginResponseType> {
-    return this.service.validateLogin(loginDTO, true);
+    return this.service.validateLogin(loginDto);
   }
 
   @Post('email/register')

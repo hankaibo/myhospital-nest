@@ -8,24 +8,23 @@ import {
   Delete,
   UseGuards,
   Query,
-  DefaultValuePipe,
-  ParseIntPipe,
   HttpStatus,
   HttpCode,
   SerializeOptions,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/roles/roles.decorator';
-import { RoleEnum } from 'src/roles/roles.enum';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { infinityPagination } from 'src/utils/infinity-pagination';
-import { User } from './entities/user.entity';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { NullableType } from '../utils/types/nullable.type';
+import { QueryUserDto } from './dto/query-user.dto';
+import { User } from './domain/user';
+import { UsersService } from './users.service';
 
 @ApiBearerAuth()
 @Roles(RoleEnum.admin)
@@ -53,17 +52,22 @@ export class UsersController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query() query: QueryUserDto,
   ): Promise<InfinityPaginationResultType<User>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 10;
     if (limit > 50) {
       limit = 50;
     }
 
     return infinityPagination(
       await this.usersService.findManyWithPagination({
-        page,
-        limit,
+        filterOptions: query?.filters,
+        sortOptions: query?.sort,
+        paginationOptions: {
+          page,
+          limit,
+        },
       }),
       { page, limit },
     );
@@ -74,8 +78,13 @@ export class UsersController {
   })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string): Promise<NullableType<User>> {
-    return this.usersService.findOne({ id: +id });
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  findOne(@Param('id') id: User['id']): Promise<NullableType<User>> {
+    return this.usersService.findOne({ id });
   }
 
   @SerializeOptions({
@@ -83,16 +92,26 @@ export class UsersController {
   })
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
   update(
-    @Param('id') id: number,
+    @Param('id') id: User['id'],
     @Body() updateProfileDto: UpdateUserDto,
-  ): Promise<User> {
+  ): Promise<User | null> {
     return this.usersService.update(id, updateProfileDto);
   }
 
   @Delete(':id')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: number): Promise<void> {
+  remove(@Param('id') id: User['id']): Promise<void> {
     return this.usersService.softDelete(id);
   }
 }

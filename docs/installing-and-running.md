@@ -48,6 +48,14 @@ Switching between TypeORM and Mongoose is implemented based on the [Dependency I
    npm install
    ```
 
+1. Run app configuration
+
+   > You should run this command only the first time on initialization of your project, all next time skip it.
+
+   ```bash
+   npm run app:config
+   ```
+
 1. Run migrations
 
    ```bash
@@ -99,10 +107,12 @@ Switching between TypeORM and Mongoose is implemented based on the [Dependency I
    npm install
    ```
 
-1. Run migrations
+1. Run app configuration
+
+   > You should run this command only the first time on initialization of your project, all next time skip it.
 
    ```bash
-   npm run migration:run
+   npm run app:config
    ```
 
 1. Run seeds

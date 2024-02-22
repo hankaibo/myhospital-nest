@@ -9,8 +9,10 @@ import {
 import { Point } from 'geojson';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 
-@Entity()
-export class Hospital extends EntityRelationalHelper {
+@Entity({
+  name: 'hospital',
+})
+export class HospitalEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
 

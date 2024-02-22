@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { FilesModule } from './files/files.module';
 import { AuthModule } from './auth/auth.module';
+import { HospitalsModule } from './hospitals/hospitals.module';
 import databaseConfig from './database/config/database.config';
 import authConfig from './auth/config/auth.config';
 import appConfig from './config/app.config';
@@ -75,6 +76,7 @@ import { DatabaseConfig } from './database/config/database-config.type';
     UsersModule,
     FilesModule,
     AuthModule,
+    HospitalsModule,
     AuthAppleModule,
     SessionModule,
     MailModule,

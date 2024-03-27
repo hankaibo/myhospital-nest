@@ -5,9 +5,9 @@ import { Session } from '../../../../domain/session';
 import { SessionSchemaClass } from '../entities/session.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from 'src/users/domain/user';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
 import { SessionMapper } from '../mappers/session.mapper';
+import { User } from '../../../../../users/domain/user';
+import { EntityCondition } from '../../../../../utils/types/entity-condition.type';
 
 @Injectable()
 export class SessionDocumentRepository implements SessionRepository {
@@ -33,6 +33,25 @@ export class SessionDocumentRepository implements SessionRepository {
     const createdSession = new this.sessionModel(persistenceModel);
     const sessionObject = await createdSession.save();
     return SessionMapper.toDomain(sessionObject);
+  }
+
+  async update(
+    id: Session['id'],
+    payload: Partial<Session>,
+  ): Promise<Session | null> {
+    const clonedPayload = { ...payload };
+    delete clonedPayload.id;
+    delete clonedPayload.createdAt;
+    delete clonedPayload.updatedAt;
+    delete clonedPayload.deletedAt;
+
+    const filter = { _id: id };
+    const sessionObject = await this.sessionModel.findOneAndUpdate(
+      filter,
+      clonedPayload,
+    );
+
+    return sessionObject ? SessionMapper.toDomain(sessionObject) : null;
   }
 
   async softDelete({

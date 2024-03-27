@@ -3,12 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Not, Repository } from 'typeorm';
 import { SessionEntity } from '../entities/session.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+
 import { SessionRepository } from '../../session.repository';
 import { Session } from '../../../../domain/session';
-import { User } from 'src/users/domain/user';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
+
 import { SessionMapper } from '../mappers/session.mapper';
+import { User } from '../../../../../users/domain/user';
+import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
+import { EntityCondition } from '../../../../../utils/types/entity-condition.type';
 
 @Injectable()
 export class SessionRelationalRepository implements SessionRepository {
@@ -32,6 +34,32 @@ export class SessionRelationalRepository implements SessionRepository {
     return this.sessionRepository.save(
       this.sessionRepository.create(persistenceModel),
     );
+  }
+
+  async update(
+    id: Session['id'],
+    payload: Partial<
+      Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
+    >,
+  ): Promise<Session | null> {
+    const entity = await this.sessionRepository.findOne({
+      where: { id: Number(id) },
+    });
+
+    if (!entity) {
+      throw new Error('Session not found');
+    }
+
+    const updatedEntity = await this.sessionRepository.save(
+      this.sessionRepository.create(
+        SessionMapper.toPersistence({
+          ...SessionMapper.toDomain(entity),
+          ...payload,
+        }),
+      ),
+    );
+
+    return SessionMapper.toDomain(updatedEntity);
   }
 
   async softDelete({

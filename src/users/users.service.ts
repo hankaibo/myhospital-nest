@@ -1,17 +1,21 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
-import { IPaginationOptions } from 'src/utils/types/pagination-options';
+import {
+  HttpStatus,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from '../utils/types/nullable.type';
 import { FilterUserDto, SortUserDto } from './dto/query-user.dto';
 import { UserRepository } from './infrastructure/persistence/user.repository';
-import { DeepPartial } from 'src/utils/types/deep-partial.type';
 import { User } from './domain/user';
-import { StatusEnum } from 'src/statuses/statuses.enum';
-import { RoleEnum } from 'src/roles/roles.enum';
-import { FilesService } from 'src/files/files.service';
 import bcrypt from 'bcryptjs';
-import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
+import { DeepPartial } from 'typeorm';
+import { AuthProvidersEnum } from '../auth/auth-providers.enum';
+import { FilesService } from '../files/files.service';
+import { RoleEnum } from '../roles/roles.enum';
+import { StatusEnum } from '../statuses/statuses.enum';
+import { EntityCondition } from '../utils/types/entity-condition.type';
+import { IPaginationOptions } from '../utils/types/pagination-options';
 
 @Injectable()
 export class UsersService {
@@ -36,15 +40,12 @@ export class UsersService {
         email: clonedPayload.email,
       });
       if (userObject) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              email: 'emailAlreadyExists',
-            },
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'emailAlreadyExists',
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
+        });
       }
     }
 
@@ -53,15 +54,12 @@ export class UsersService {
         id: clonedPayload.photo.id,
       });
       if (!fileObject) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              photo: 'imageNotExists',
-            },
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            photo: 'imageNotExists',
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
+        });
       }
       clonedPayload.photo = fileObject;
     }
@@ -71,15 +69,12 @@ export class UsersService {
         clonedPayload.role.id,
       );
       if (!roleObject) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              role: 'roleNotExists',
-            },
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            role: 'roleNotExists',
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
+        });
       }
     }
 
@@ -88,15 +83,12 @@ export class UsersService {
         clonedPayload.status.id,
       );
       if (!statusObject) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              status: 'statusNotExists',
-            },
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            status: 'statusNotExists',
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
+        });
       }
     }
 
@@ -142,16 +134,13 @@ export class UsersService {
         email: clonedPayload.email,
       });
 
-      if (userObject?.id !== id) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              email: 'emailAlreadyExists',
-            },
+      if (userObject && userObject.id !== id) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'emailAlreadyExists',
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
+        });
       }
     }
 
@@ -160,15 +149,12 @@ export class UsersService {
         id: clonedPayload.photo.id,
       });
       if (!fileObject) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              photo: 'imageNotExists',
-            },
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            photo: 'imageNotExists',
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
+        });
       }
       clonedPayload.photo = fileObject;
     }
@@ -178,15 +164,12 @@ export class UsersService {
         clonedPayload.role.id,
       );
       if (!roleObject) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              role: 'roleNotExists',
-            },
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            role: 'roleNotExists',
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
+        });
       }
     }
 
@@ -195,15 +178,12 @@ export class UsersService {
         clonedPayload.status.id,
       );
       if (!statusObject) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              status: 'statusNotExists',
-            },
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            status: 'statusNotExists',
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
+        });
       }
     }
 

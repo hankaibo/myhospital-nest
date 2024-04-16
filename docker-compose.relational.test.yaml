@@ -25,6 +25,8 @@ services:
   api:
     build:
       context: .
-      dockerfile: relational.e2e.Dockerfile
+      dockerfile: relational.test.Dockerfile
     env_file:
       - env-example-relational
+    volumes:
+      - .:/usr/src/app

@@ -2,7 +2,7 @@ import { Controller, Get, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { HospitalsService } from './hospitals.service';
 import { QueryHospitalDto } from './dto/query-hospital.dto';
-import { Hospital } from './domain/hospital';
+import { HospitalEntity } from './entities/hospital.entity';
 
 @ApiTags('Hospitals')
 @Controller({
@@ -14,7 +14,7 @@ export class HospitalsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  findWithCircle(@Query() query: QueryHospitalDto): Promise<Hospital[]> {
+  findWithCircle(@Query() query: QueryHospitalDto): Promise<HospitalEntity[]> {
     return this.hospitalsService.findManyWithCircle({ circleOptions: query });
   }
 }

@@ -13,18 +13,19 @@
 
 ## Description <!-- omit in toc -->
 
-NestJS REST API boilerplate for typical project
+NestJS REST API boilerplate for a typical project
 
 [Full documentation here](/docs/readme.md)
 
 Demo: <https://nestjs-boilerplate-test.herokuapp.com/docs>
 
-Frontend (React, Next.js): <https://github.com/brocoders/extensive-react-boilerplate>
+Belongs to the [bc boilerplates](https://bcboilerplates.com/) ecosystem
 
 ## Table of Contents <!-- omit in toc -->
 
 - [Features](#features)
 - [Contributors](#contributors)
+- [Support](#support)
 
 ## Features
 
@@ -62,3 +63,7 @@ Frontend (React, Next.js): <https://github.com/brocoders/extensive-react-boilerp
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+## Support
+
+If you seek consulting, support, or wish to collaborate, please contact us via [boilerplates@brocoders.com](mailto:boilerplates@brocoders.com). For any inquiries regarding boilerplates, feel free to ask on [GitHub Discussions](https://github.com/brocoders/nestjs-boilerplate/discussions) or [Discord](https://discord.com/channels/520622812742811698/1197293125434093701).

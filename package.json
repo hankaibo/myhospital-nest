@@ -74,7 +74,7 @@
     "@nestjs/testing": "10.3.8",
     "@release-it/conventional-changelog": "8.0.1",
     "@swc/cli": "0.3.12",
-    "@swc/core": "1.5.3",
+    "@swc/core": "1.5.5",
     "@types/bcryptjs": "2.4.6",
     "@types/express": "4.17.21",
     "@types/geojson": "^7946.0.14",
@@ -188,8 +188,5 @@
         }
       }
     }
-  },
-  "volta": {
-    "node": "20.12.2"
   }
 }

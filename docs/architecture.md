@@ -8,6 +8,7 @@
 - [Motivation](#motivation)
 - [Pitfalls](#pitfalls)
 - [FAQ](#faq)
+  - [Is there a way to generate a new resource (controller, service, DTOs, etc) with Hexagonal Architecture?](#is-there-a-way-to-generate-a-new-resource-controller-service-dtos-etc-with-hexagonal-architecture)
   - [I don't want to use Hexagonal Architecture. How can I use a traditional (three-tier) architecture for NestJS?](#i-dont-want-to-use-hexagonal-architecture-how-can-i-use-a-traditional-three-tier-architecture-for-nestjs)
 
 ---
@@ -30,6 +31,10 @@ Hexagonal Architecture takes more effort to implement, but it gives more flexibi
 
 ## FAQ
 
+### Is there a way to generate a new resource (controller, service, DTOs, etc) with Hexagonal Architecture?
+
+Yes, you can use the [CLI](cli.md) to generate a new resource with Hexagonal Architecture.
+
 ### I don't want to use Hexagonal Architecture. How can I use a traditional (three-tier) architecture for NestJS?
 
 You still can use [Three-tier Architecture](https://en.wikipedia.org/wiki/Multitier_architecture#Three-tier_architecture) `[controllers] -> [services] -> [data access]` near [Hexagonal Architecture](#hexagonal-architecture).
@@ -40,4 +45,4 @@ Database example: Just keep the existing approach of getting data from the datab
 
 Previous: [Installing and Running](installing-and-running.md)
 
-Next: [Working with database](database.md)
+Next: [Command Line Interface](cli.md)

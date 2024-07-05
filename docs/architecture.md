@@ -6,10 +6,13 @@
 
 - [Hexagonal Architecture](#hexagonal-architecture)
 - [Motivation](#motivation)
+- [Recommendations](#recommendations)
+  - [Repository](#repository)
 - [Pitfalls](#pitfalls)
 - [FAQ](#faq)
   - [Is there a way to generate a new resource (controller, service, DTOs, etc) with Hexagonal Architecture?](#is-there-a-way-to-generate-a-new-resource-controller-service-dtos-etc-with-hexagonal-architecture)
   - [I don't want to use Hexagonal Architecture. How can I use a traditional (three-tier) architecture for NestJS?](#i-dont-want-to-use-hexagonal-architecture-how-can-i-use-a-traditional-three-tier-architecture-for-nestjs)
+- [Links](#links)
 
 ---
 
@@ -23,9 +26,32 @@ NestJS Boilerplate is based on [Hexagonal Architecture](https://en.wikipedia.org
 
 The main reason for using Hexagonal Architecture is to separate the business logic from the infrastructure. This separation allows us to easily change the database, the way of uploading files, or any other infrastructure without changing the business logic.
 
+## Recommendations
+### Repository
+Don't try to create universal methods in the repository because they are difficult to extend during the project's life. Instead of this create methods with a single responsibility.
+```typescript
+// ❌
+export class UsersRelationalRepository implements UserRepository {
+  async find(condition: UniversalConditionInterface): Promise<User> {
+    // ...
+  }
+}
+// ✅
+export class UsersRelationalRepository implements UserRepository {
+  async findByEmail(email: string): Promise<User> {
+    // ...
+  }
+  async findByRoles(roles: string[]): Promise<User> {
+    // ...
+  }
+  async findByIds(ids: string[]): Promise<User> {
+    // ...
+  }
+}
+```
 ## Pitfalls
 
-Hexagonal Architecture takes more effort to implement, but it gives more flexibility and scalability. [If the time for your project is critical, you can use Three-tier architecture.](#i-dont-want-to-use-hexagonal-architecture-how-can-i-use-a-traditional-three-tier-architecture-for-nestjs)
+Hexagonal Architecture can take more effort to implement, but it gives more flexibility and scalability. [You still can use Three-tier architecture](#i-dont-want-to-use-hexagonal-architecture-how-can-i-use-a-traditional-three-tier-architecture-for-nestjs), but we recommend using Hexagonal Architecture. Try to create resources via our [CLI](cli.md), you will be sure that makes the same time (maybe even less 🤔) as Three-tier architecture.
 
 ---
 
@@ -43,6 +69,9 @@ Database example: Just keep the existing approach of getting data from the datab
 
 ---
 
+## Links
+- [Dependency Inversion Principle](https://trilon.io/blog/dependency-inversion-principle) with NestJS.
+---
 Previous: [Installing and Running](installing-and-running.md)
 
 Next: [Command Line Interface](cli.md)

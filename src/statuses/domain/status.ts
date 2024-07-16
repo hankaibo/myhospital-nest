@@ -1,17 +1,17 @@
-import { ApiResponseProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Allow } from 'class-validator';
 
 const idType = Number;
 
 export class Status {
   @Allow()
-  @ApiResponseProperty({
+  @ApiProperty({
     type: idType,
   })
   id: number | string;
 
   @Allow()
-  @ApiResponseProperty({
+  @ApiProperty({
     type: String,
     example: 'active',
   })

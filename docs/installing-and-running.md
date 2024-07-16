@@ -51,6 +51,7 @@ Switching between TypeORM and Mongoose is implemented based on the [Hexagonal Ar
 1. Run app configuration
 
    > You should run this command only the first time on initialization of your project, all next time skip it.
+
    > If you want to contribute to the boilerplate, you should NOT run this command.
 
    ```bash
@@ -111,6 +112,7 @@ Switching between TypeORM and Mongoose is implemented based on the [Hexagonal Ar
 1. Run app configuration
 
    > You should run this command only the first time on initialization of your project, all next time skip it.
+
    > If you want to contribute to the boilerplate, you should NOT run this command.
 
    ```bash

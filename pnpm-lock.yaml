@@ -154,8 +154,8 @@ importers:
         specifier: 0.7.34
         version: 0.7.34
       '@types/multer':
-        specifier: 1.4.11
-        version: 1.4.11
+        specifier: 1.4.12
+        version: 1.4.12
       '@types/node':
         specifier: 20.14.12
         version: 20.14.12
@@ -1595,8 +1595,8 @@ packages:
   '@types/multer-s3@3.0.3':
     resolution: {integrity: sha512-VgWygI9UwyS7loLithUUi0qAMIDWdNrERS2Sb06UuPYiLzKuIFn2NgL7satyl4v8sh/LLoU7DiPanvbQaRg9Yg==}
 
-  '@types/multer@1.4.11':
-    resolution: {integrity: sha512-svK240gr6LVWvv3YGyhLlA+6LRRWA4mnGIU7RcNmgjBYFl6665wcXrRfxGp5tEPVHUNm5FMcmq7too9bxCwX/w==}
+  '@types/multer@1.4.12':
+    resolution: {integrity: sha512-pQ2hoqvXiJt2FP9WQVLPRO+AmiIm/ZYkavPlIQnx282u4ZrVdztx0pkh3jjpQt0Kz+YI0YhSG264y08UJKoUQg==}
 
   '@types/node@17.0.45':
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
@@ -7640,12 +7640,12 @@ snapshots:
   '@types/multer-s3@3.0.3':
     dependencies:
       '@aws-sdk/client-s3': 3.616.0
-      '@types/multer': 1.4.11
+      '@types/multer': 1.4.12
       '@types/node': 20.14.12
     transitivePeerDependencies:
       - aws-crt
 
-  '@types/multer@1.4.11':
+  '@types/multer@1.4.12':
     dependencies:
       '@types/express': 4.17.21
 

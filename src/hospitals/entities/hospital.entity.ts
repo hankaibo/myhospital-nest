@@ -22,25 +22,25 @@ export class HospitalEntity extends EntityRelationalHelper {
   @Column()
   code: string;
 
-  @Column()
+  @Column({ type: String, nullable: true })
   district: string;
 
-  @Column()
+  @Column({ type: String, nullable: true })
   type: string;
 
   @Column()
   lvl: string;
 
-  @Column()
+  @Column({ type: String, nullable: true })
   address: string;
 
-  @Column({ name: 'zip_code' })
+  @Column({ name: 'zip_code', type: String, nullable: true })
   zipCode: string;
 
-  @Column()
+  @Column({ type: String, nullable: true })
   introduction: string;
 
-  @Column({ type: 'geometry', name: 'lng_lat' })
+  @Column({ type: 'geometry', name: 'lng_lat', nullable: true })
   lngLat: Point;
 
   @CreateDateColumn()

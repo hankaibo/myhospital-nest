@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindOptionsWhere } from 'typeorm';
 
 import { HospitalEntity } from './entities/hospital.entity';
-import { QueryHospitalDto } from './dto/query-hospital.dto';
+import { QueryHospitalDto, SortHospitalDto } from './dto/query-hospital.dto';
+
+import { IPaginationOptions } from '../utils/types/pagination-options';
+import { Hospital } from './domain/hospital';
+import { HospitalMapper } from './mappers/hospital.mapper';
 
 @Injectable()
 export class HospitalsService {
@@ -12,11 +16,38 @@ export class HospitalsService {
     private readonly hospitalsRepository: Repository<HospitalEntity>,
   ) {}
 
+  async findManyWithPagination({
+    sortOptions,
+    paginationOptions,
+  }: {
+    sortOptions?: SortHospitalDto[] | null;
+    paginationOptions: IPaginationOptions;
+  }): Promise<Hospital[]> {
+    const where: FindOptionsWhere<HospitalEntity> = {};
+
+    const entities = await this.hospitalsRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: where,
+      order: sortOptions?.reduce(
+        (accumulator, sort) => ({
+          ...accumulator,
+          [sort.orderBy]: sort.order,
+        }),
+        {},
+      ),
+    });
+
+    return entities.map((hospitalEntity) =>
+      HospitalMapper.toDomain(hospitalEntity),
+    );
+  }
+
   async findManyWithCircle({
     circleOptions,
   }: {
     circleOptions: QueryHospitalDto;
-  }): Promise<HospitalEntity[]> {
+  }): Promise<Hospital[]> {
     const { longitude, latitude, radius } = circleOptions;
 
     const entities = await this.hospitalsRepository
@@ -31,6 +62,8 @@ export class HospitalsService {
       )
       .getMany();
 
-    return entities;
+    return entities.map((hospitalEntity) =>
+      HospitalMapper.toDomain(hospitalEntity),
+    );
   }
 }

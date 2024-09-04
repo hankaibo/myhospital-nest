@@ -16,29 +16,29 @@ export class HospitalEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
-
-  @Column()
-  code: string;
+  @Column({ type: String, nullable: true })
+  name: string | null;
 
   @Column({ type: String, nullable: true })
-  district: string;
+  code: string | null;
 
   @Column({ type: String, nullable: true })
-  type: string;
-
-  @Column()
-  lvl: string;
+  district: string | null;
 
   @Column({ type: String, nullable: true })
-  address: string;
+  type: string | null;
+
+  @Column({ type: String, nullable: true })
+  lvl: string | null;
+
+  @Column({ type: String, nullable: true })
+  address: string | null;
 
   @Column({ name: 'zip_code', type: String, nullable: true })
-  zipCode: string;
+  zipCode: string | null;
 
   @Column({ type: String, nullable: true })
-  introduction: string;
+  introduction: string | null;
 
   @Column({ type: 'geometry', name: 'lng_lat', nullable: true })
   lngLat: Point;

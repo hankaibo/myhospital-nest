@@ -22,10 +22,10 @@ export class HospitalsService {
   }: {
     sortOptions?: SortHospitalDto[] | null;
     paginationOptions: IPaginationOptions;
-  }): Promise<Hospital[]> {
+  }): Promise<[Hospital[], number]> {
     const where: FindOptionsWhere<HospitalEntity> = {};
 
-    const entities = await this.hospitalsRepository.find({
+    const [entities, total] = await this.hospitalsRepository.findAndCount({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: where,
@@ -38,9 +38,10 @@ export class HospitalsService {
       ),
     });
 
-    return entities.map((hospitalEntity) =>
-      HospitalMapper.toDomain(hospitalEntity),
-    );
+    return [
+      entities.map((hospitalEntity) => HospitalMapper.toDomain(hospitalEntity)),
+      total,
+    ];
   }
 
   async findManyWithCircle({

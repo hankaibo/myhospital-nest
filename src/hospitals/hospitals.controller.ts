@@ -13,12 +13,10 @@ import { Hospital } from './domain/hospital';
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
-import {
-  InfinityPaginationResponse,
-  InfinityPaginationResponseDto,
-} from '../utils/dto/infinity-pagination-response.dto';
-import { infinityPagination } from '../utils/infinity-pagination';
+import { InfinityPaginationResponse } from '../utils/dto/infinity-pagination-response.dto';
+import { PaginationResponseDto } from '../utils/dto/pagination-response.dto';
 import { RolesGuard } from '../roles/roles.guard';
+import { pagination } from '../utils/pagination';
 
 @ApiBearerAuth()
 @ApiTags('Hospitals')
@@ -38,19 +36,17 @@ export class HospitalsController {
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query() query: QueryHospitalDto,
-  ): Promise<InfinityPaginationResponseDto<Hospital>> {
+  ): Promise<PaginationResponseDto<Hospital>> {
     const { page = 1, limit = 10 } = query;
 
-    return infinityPagination(
-      await this.hospitalsService.findManyWithPagination({
-        sortOptions: query?.sort,
-        paginationOptions: {
-          page,
-          limit,
-        },
-      }),
-      { page, limit },
-    );
+    const [data, total] = await this.hospitalsService.findManyWithPagination({
+      sortOptions: query?.sort,
+      paginationOptions: {
+        page,
+        limit,
+      },
+    });
+    return pagination(data, { page, limit }, total);
   }
 
   @Get()

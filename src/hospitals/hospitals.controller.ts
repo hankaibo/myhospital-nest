@@ -15,7 +15,6 @@ import { HospitalsService } from './hospitals.service';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
 import { UpdateHospitalDto } from './dto/update-hospital.dto';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
@@ -39,7 +38,6 @@ import { pagination } from '../utils/pagination';
 import { FindAllHospitalsDto } from './dto/find-all-hospitals.dto';
 
 @ApiTags('Hospitals')
-@ApiBearerAuth()
 @Controller({
   path: 'hospitals',
   version: '1',
@@ -51,6 +49,8 @@ export class HospitalsController {
   @ApiCreatedResponse({
     type: Hospital,
   })
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   create(@Body() createHospitalDto: CreateHospitalDto) {
     return this.hospitalsService.create(createHospitalDto);
   }
@@ -150,7 +150,7 @@ export class HospitalsController {
     return pagination(data, { page, limit }, total);
   }
 
-  @Get()
+  @Get('circle')
   @HttpCode(HttpStatus.OK)
   findWithCircle(@Query() query: FindAllHospitalsDto): Promise<Hospital[]> {
     const longitude = query?.longitude ?? 116.4074;

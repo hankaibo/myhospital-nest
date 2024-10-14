@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { HospitalsController } from './hospitals.controller';
 import { HospitalsService } from './hospitals.service';
-import { HospitalEntity } from './entities/hospital.entity';
+import { RelationalHospitalPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([HospitalEntity])],
+  imports: [
+    // import modules, etc.
+    RelationalHospitalPersistenceModule,
+  ],
   controllers: [HospitalsController],
   providers: [HospitalsService],
+  exports: [HospitalsService, RelationalHospitalPersistenceModule],
 })
 export class HospitalsModule {}

@@ -1,25 +1,40 @@
 import {
   Controller,
   Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
   Query,
   HttpCode,
   HttpStatus,
-  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { HospitalsService } from './hospitals.service';
-import { QueryHospitalDto } from './dto/query-hospital.dto';
+import { CreateHospitalDto } from './dto/create-hospital.dto';
+import { UpdateHospitalDto } from './dto/update-hospital.dto';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Hospital } from './domain/hospital';
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/roles.enum';
-import { AuthGuard } from '@nestjs/passport';
-import { InfinityPaginationResponse } from '../utils/dto/infinity-pagination-response.dto';
-import { PaginationResponseDto } from '../utils/dto/pagination-response.dto';
 import { RolesGuard } from '../roles/roles.guard';
-import { pagination } from '../utils/pagination';
+import { AuthGuard } from '@nestjs/passport';
+import {
+  InfinityPaginationResponse,
+  InfinityPaginationResponseDto,
+} from '../utils/dto/infinity-pagination-response.dto';
+import { infinityPagination } from '../utils/infinity-pagination';
+import { FindAllHospitalsDto } from './dto/find-all-hospitals.dto';
 
-@ApiBearerAuth()
 @ApiTags('Hospitals')
+@ApiBearerAuth()
 @Controller({
   path: 'hospitals',
   version: '1',
@@ -27,6 +42,15 @@ import { pagination } from '../utils/pagination';
 export class HospitalsController {
   constructor(private readonly hospitalsService: HospitalsService) {}
 
+  @Post()
+  @ApiCreatedResponse({
+    type: Hospital,
+  })
+  create(@Body() createHospitalDto: CreateHospitalDto) {
+    return this.hospitalsService.create(createHospitalDto);
+  }
+
+  @Get()
   @ApiOkResponse({
     type: InfinityPaginationResponse(Hospital),
   })
@@ -35,23 +59,77 @@ export class HospitalsController {
   @Get('all')
   @HttpCode(HttpStatus.OK)
   async findAll(
-    @Query() query: QueryHospitalDto,
-  ): Promise<PaginationResponseDto<Hospital>> {
-    const { page = 1, limit = 10 } = query;
+    @Query() query: FindAllHospitalsDto,
+  ): Promise<InfinityPaginationResponseDto<Hospital>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
 
-    const [data, total] = await this.hospitalsService.findManyWithPagination({
-      sortOptions: query?.sort,
-      paginationOptions: {
-        page,
-        limit,
-      },
-    });
-    return pagination(data, { page, limit }, total);
+    return infinityPagination(
+      await this.hospitalsService.findAllWithPagination({
+        paginationOptions: {
+          page,
+          limit,
+        },
+      }),
+      { page, limit },
+    );
+  }
+
+  @Get(':id')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  @ApiOkResponse({
+    type: Hospital,
+  })
+  findById(@Param('id') id: string) {
+    return this.hospitalsService.findById(id);
+  }
+
+  @Patch(':id')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  @ApiOkResponse({
+    type: Hospital,
+  })
+  update(
+    @Param('id') id: string,
+    @Body() updateHospitalDto: UpdateHospitalDto,
+  ) {
+    return this.hospitalsService.update(id, updateHospitalDto);
+  }
+
+  @Delete(':id')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+  })
+  remove(@Param('id') id: string) {
+    return this.hospitalsService.remove(id);
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  findWithCircle(@Query() query: QueryHospitalDto): Promise<Hospital[]> {
-    return this.hospitalsService.findManyWithCircle({ circleOptions: query });
+  findWithCircle(@Query() query: FindAllHospitalsDto): Promise<Hospital[]> {
+    const longitude = query?.longitude ?? 116.4074;
+    const latitude = query?.latitude ?? 39.9042;
+    const radius = query?.radius ?? 500;
+
+    return this.hospitalsService.findByCircle({
+      circleOptions: {
+        longitude,
+        latitude,
+        radius,
+      },
+    });
   }
 }

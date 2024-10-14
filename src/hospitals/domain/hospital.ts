@@ -1,12 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-const idType = Number;
-
 export class Hospital {
   @ApiProperty({
-    type: idType,
+    type: String,
   })
-  id: number | string;
+  id: string;
 
   @ApiProperty({ type: String })
   name: string | null;
@@ -43,7 +41,4 @@ export class Hospital {
 
   @ApiProperty()
   updatedAt: Date;
-
-  @ApiProperty()
-  deletedAt: Date;
 }

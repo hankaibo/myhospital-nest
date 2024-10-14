@@ -14,16 +14,13 @@ export class User {
 
   @ApiProperty({
     type: String,
-    example: 'john.doe@example.com',
+    example: 'zhangsan@example.com',
   })
   @Expose({ groups: ['me', 'admin'] })
   email: string | null;
 
   @Exclude({ toPlainOnly: true })
   password?: string;
-
-  @Exclude({ toPlainOnly: true })
-  previousPassword?: string;
 
   @ApiProperty({
     type: String,

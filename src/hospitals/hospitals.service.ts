@@ -1,70 +1,75 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOptionsWhere } from 'typeorm';
-
-import { HospitalEntity } from './entities/hospital.entity';
-import { QueryHospitalDto, SortHospitalDto } from './dto/query-hospital.dto';
-
+import { CreateHospitalDto } from './dto/create-hospital.dto';
+import { UpdateHospitalDto } from './dto/update-hospital.dto';
+import { HospitalRepository } from './infrastructure/persistence/hospital.repository';
 import { IPaginationOptions } from '../utils/types/pagination-options';
+import { ICircleOptions } from '../utils/types/circle-options';
 import { Hospital } from './domain/hospital';
-import { HospitalMapper } from './mappers/hospital.mapper';
 
 @Injectable()
 export class HospitalsService {
   constructor(
-    @InjectRepository(HospitalEntity)
-    private readonly hospitalsRepository: Repository<HospitalEntity>,
+    // Dependencies here
+    private readonly hospitalRepository: HospitalRepository,
   ) {}
 
-  async findManyWithPagination({
-    sortOptions,
-    paginationOptions,
-  }: {
-    sortOptions?: SortHospitalDto[] | null;
-    paginationOptions: IPaginationOptions;
-  }): Promise<[Hospital[], number]> {
-    const where: FindOptionsWhere<HospitalEntity> = {};
-
-    const [entities, total] = await this.hospitalsRepository.findAndCount({
-      skip: (paginationOptions.page - 1) * paginationOptions.limit,
-      take: paginationOptions.limit,
-      where: where,
-      order: sortOptions?.reduce(
-        (accumulator, sort) => ({
-          ...accumulator,
-          [sort.orderBy]: sort.order,
-        }),
-        {},
-      ),
+  async create(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    createHospitalDto: CreateHospitalDto,
+  ) {
+    // Do not remove comment below.
+    // <creating-property />
+    return this.hospitalRepository.create({
+      // Do not remove comment below.
+      // <creating-property-payload />
     });
-
-    return [
-      entities.map((hospitalEntity) => HospitalMapper.toDomain(hospitalEntity)),
-      total,
-    ];
   }
 
-  async findManyWithCircle({
-    circleOptions,
+  findAllWithPagination({
+    paginationOptions,
   }: {
-    circleOptions: QueryHospitalDto;
-  }): Promise<Hospital[]> {
-    const { longitude, latitude, radius } = circleOptions;
+    paginationOptions: IPaginationOptions;
+  }) {
+    return this.hospitalRepository.findAllWithPagination({
+      paginationOptions: {
+        page: paginationOptions.page,
+        limit: paginationOptions.limit,
+      },
+    });
+  }
 
-    const entities = await this.hospitalsRepository
-      .createQueryBuilder('hospital')
-      .where(
-        `ST_DistanceSphere(hospital.lng_lat, ST_MakePoint(:longitude, :latitude)) <= :radius`,
-        {
-          longitude,
-          latitude,
-          radius,
-        },
-      )
-      .getMany();
+  findById(id: Hospital['id']) {
+    return this.hospitalRepository.findById(id);
+  }
 
-    return entities.map((hospitalEntity) =>
-      HospitalMapper.toDomain(hospitalEntity),
-    );
+  findByIds(ids: Hospital['id'][]) {
+    return this.hospitalRepository.findByIds(ids);
+  }
+
+  findByCircle({ circleOptions }: { circleOptions: ICircleOptions }) {
+    return this.hospitalRepository.findByCircle({
+      circleOptions: {
+        latitude: circleOptions.latitude,
+        longitude: circleOptions.longitude,
+        radius: circleOptions.radius,
+      },
+    });
+  }
+
+  async update(
+    id: Hospital['id'],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateHospitalDto: UpdateHospitalDto,
+  ) {
+    // Do not remove comment below.
+    // <updating-property />
+    return this.hospitalRepository.update(id, {
+      // Do not remove comment below.
+      // <updating-property-payload />
+    });
+  }
+
+  remove(id: Hospital['id']) {
+    return this.hospitalRepository.remove(id);
   }
 }

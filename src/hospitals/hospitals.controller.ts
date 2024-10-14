@@ -30,7 +30,12 @@ import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from '../utils/dto/infinity-pagination-response.dto';
+import {
+  PaginationResponse,
+  PaginationResponseDto,
+} from '../utils/dto/pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
+import { pagination } from '../utils/pagination';
 import { FindAllHospitalsDto } from './dto/find-all-hospitals.dto';
 
 @ApiTags('Hospitals')
@@ -56,7 +61,6 @@ export class HospitalsController {
   })
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Get('all')
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query() query: FindAllHospitalsDto,
@@ -87,6 +91,8 @@ export class HospitalsController {
   @ApiOkResponse({
     type: Hospital,
   })
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   findById(@Param('id') id: string) {
     return this.hospitalsService.findById(id);
   }
@@ -100,6 +106,8 @@ export class HospitalsController {
   @ApiOkResponse({
     type: Hospital,
   })
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   update(
     @Param('id') id: string,
     @Body() updateHospitalDto: UpdateHospitalDto,
@@ -113,8 +121,33 @@ export class HospitalsController {
     type: String,
     required: true,
   })
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   remove(@Param('id') id: string) {
     return this.hospitalsService.remove(id);
+  }
+
+  @ApiOkResponse({
+    type: PaginationResponse(Hospital),
+  })
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Get('all')
+  @HttpCode(HttpStatus.OK)
+  async find(
+    @Query() query: FindAllHospitalsDto,
+  ): Promise<PaginationResponseDto<Hospital>> {
+    const { page = 1, limit = 10 } = query;
+
+    const [data, total] =
+      await this.hospitalsService.findAllAndCountWithPagination({
+        sortOptions: query?.sort,
+        paginationOptions: {
+          page,
+          limit,
+        },
+      });
+    return pagination(data, { page, limit }, total);
   }
 
   @Get()

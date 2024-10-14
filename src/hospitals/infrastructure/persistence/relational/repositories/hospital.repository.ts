@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, FindOptionsWhere } from 'typeorm';
 import { HospitalEntity } from '../entities/hospital.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Hospital } from '../../../../domain/hospital';
@@ -8,6 +8,7 @@ import { HospitalRepository } from '../../hospital.repository';
 import { HospitalMapper } from '../mappers/hospital.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 import { ICircleOptions } from '../../../../../utils/types/circle-options';
+import { SortHospitalDto } from '../../../../dto/find-all-hospitals.dto';
 
 @Injectable()
 export class HospitalRelationalRepository implements HospitalRepository {
@@ -35,6 +36,31 @@ export class HospitalRelationalRepository implements HospitalRepository {
     });
 
     return entities.map((entity) => HospitalMapper.toDomain(entity));
+  }
+
+  async findAllAndCountWithPagination({
+    sortOptions,
+    paginationOptions,
+  }: {
+    sortOptions?: SortHospitalDto[] | null;
+    paginationOptions: IPaginationOptions;
+  }): Promise<[Hospital[], number]> {
+    const where: FindOptionsWhere<HospitalEntity> = {};
+
+    const [entities, total] = await this.hospitalRepository.findAndCount({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: where,
+      order: sortOptions?.reduce(
+        (accumulator, sort) => ({
+          ...accumulator,
+          [sort.orderBy]: sort.order,
+        }),
+        {},
+      ),
+    });
+
+    return [entities.map((entity) => HospitalMapper.toDomain(entity)), total];
   }
 
   async findById(id: Hospital['id']): Promise<NullableType<Hospital>> {

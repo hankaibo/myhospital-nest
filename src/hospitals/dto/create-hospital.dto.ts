@@ -33,4 +33,10 @@ export class CreateHospitalDto {
   @ApiProperty({ type: String })
   @IsNotEmpty()
   introduction: string | null;
+
+  @ApiProperty({ type: Number })
+  lng: number | null;
+
+  @ApiProperty({ type: Number })
+  lat: number | null;
 }

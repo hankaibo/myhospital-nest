@@ -4,6 +4,7 @@ import { UpdateHospitalDto } from './dto/update-hospital.dto';
 import { HospitalRepository } from './infrastructure/persistence/hospital.repository';
 import { IPaginationOptions } from '../utils/types/pagination-options';
 import { ICircleOptions } from '../utils/types/circle-options';
+import { SortHospitalDto } from './dto/find-all-hospitals.dto';
 import { Hospital } from './domain/hospital';
 
 @Injectable()
@@ -13,15 +14,22 @@ export class HospitalsService {
     private readonly hospitalRepository: HospitalRepository,
   ) {}
 
-  async create(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createHospitalDto: CreateHospitalDto,
-  ) {
+  async create(createHospitalDto: CreateHospitalDto) {
     // Do not remove comment below.
     // <creating-property />
     return this.hospitalRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      name: createHospitalDto.name,
+      code: createHospitalDto.code,
+      district: createHospitalDto.district,
+      type: createHospitalDto.type,
+      lvl: createHospitalDto.lvl,
+      address: createHospitalDto.address,
+      zipCode: createHospitalDto.zipCode,
+      introduction: createHospitalDto.introduction,
+      lat: createHospitalDto.lat,
+      lng: createHospitalDto.lng,
     });
   }
 
@@ -46,6 +54,19 @@ export class HospitalsService {
     return this.hospitalRepository.findByIds(ids);
   }
 
+  async findAllAndCountWithPagination({
+    sortOptions,
+    paginationOptions,
+  }: {
+    sortOptions?: SortHospitalDto[] | null;
+    paginationOptions: IPaginationOptions;
+  }) {
+    return await this.hospitalRepository.findAllAndCountWithPagination({
+      sortOptions,
+      paginationOptions,
+    });
+  }
+
   findByCircle({ circleOptions }: { circleOptions: ICircleOptions }) {
     return this.hospitalRepository.findByCircle({
       circleOptions: {
@@ -58,7 +79,7 @@ export class HospitalsService {
 
   async update(
     id: Hospital['id'],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     updateHospitalDto: UpdateHospitalDto,
   ) {
     // Do not remove comment below.
@@ -66,6 +87,16 @@ export class HospitalsService {
     return this.hospitalRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      name: updateHospitalDto.name,
+      code: updateHospitalDto.code,
+      district: updateHospitalDto.district,
+      type: updateHospitalDto.type,
+      lvl: updateHospitalDto.lvl,
+      address: updateHospitalDto.address,
+      zipCode: updateHospitalDto.zipCode,
+      introduction: updateHospitalDto.introduction,
+      lat: updateHospitalDto.lat,
+      lng: updateHospitalDto.lng,
     });
   }
 

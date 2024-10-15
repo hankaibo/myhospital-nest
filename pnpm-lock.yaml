@@ -2554,11 +2554,6 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  ejs@3.1.9:
-    resolution: {integrity: sha512-rC+QVNMJWv+MtPgkt0y+0rVEIdbtxVADApW9JXrUVlzHetgcyczP/E7DJmWJ4fJCZF2cPcBk0laWO9ZHMG3DmQ==}
-    engines: {node: '>=0.10.0'}
-    hasBin: true
-
   electron-to-chromium@1.4.617:
     resolution: {integrity: sha512-sYNE3QxcDS4ANW1k4S/wWYMXjCVcFSOX3Bg8jpuMFaXt/x8JCmp0R1Xe1ZXDX4WXnSRBf+GJ/3eGWicUuQq5cg==}
 
@@ -8503,10 +8498,6 @@ snapshots:
     dependencies:
       jake: 10.8.7
 
-  ejs@3.1.9:
-    dependencies:
-      jake: 10.8.7
-
   electron-to-chromium@1.4.617: {}
 
   emittery@0.13.1: {}
@@ -9220,7 +9211,7 @@ snapshots:
       change-case: 3.1.0
       debug: 4.3.4
       degit: 2.8.4
-      ejs: 3.1.9
+      ejs: 3.1.10
       enquirer: 2.4.1
       execa: 5.1.1
       front-matter: 4.0.2

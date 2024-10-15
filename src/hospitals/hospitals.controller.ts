@@ -15,6 +15,7 @@ import { HospitalsService } from './hospitals.service';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
 import { UpdateHospitalDto } from './dto/update-hospital.dto';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
@@ -45,6 +46,23 @@ import { FindAllHospitalsDto } from './dto/find-all-hospitals.dto';
 export class HospitalsController {
   constructor(private readonly hospitalsService: HospitalsService) {}
 
+  @Get('circle')
+  @HttpCode(HttpStatus.OK)
+  findWithCircle(@Query() query: FindAllHospitalsDto): Promise<Hospital[]> {
+    const longitude = query?.longitude ?? 116.4074;
+    const latitude = query?.latitude ?? 39.9042;
+    const radius = query?.radius ?? 500;
+
+    return this.hospitalsService.findByCircle({
+      circleOptions: {
+        longitude,
+        latitude,
+        radius,
+      },
+    });
+  }
+
+  @ApiBearerAuth()
   @Post()
   @ApiCreatedResponse({
     type: Hospital,
@@ -55,6 +73,7 @@ export class HospitalsController {
     return this.hospitalsService.create(createHospitalDto);
   }
 
+  @ApiBearerAuth()
   @Get()
   @ApiOkResponse({
     type: InfinityPaginationResponse(Hospital),
@@ -82,6 +101,7 @@ export class HospitalsController {
     );
   }
 
+  @ApiBearerAuth()
   @Get(':id')
   @ApiParam({
     name: 'id',
@@ -97,6 +117,7 @@ export class HospitalsController {
     return this.hospitalsService.findById(id);
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
   @ApiParam({
     name: 'id',
@@ -115,6 +136,7 @@ export class HospitalsController {
     return this.hospitalsService.update(id, updateHospitalDto);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
   @ApiParam({
     name: 'id',
@@ -127,6 +149,7 @@ export class HospitalsController {
     return this.hospitalsService.remove(id);
   }
 
+  @ApiBearerAuth()
   @ApiOkResponse({
     type: PaginationResponse(Hospital),
   })
@@ -148,21 +171,5 @@ export class HospitalsController {
         },
       });
     return pagination(data, { page, limit }, total);
-  }
-
-  @Get('circle')
-  @HttpCode(HttpStatus.OK)
-  findWithCircle(@Query() query: FindAllHospitalsDto): Promise<Hospital[]> {
-    const longitude = query?.longitude ?? 116.4074;
-    const latitude = query?.latitude ?? 39.9042;
-    const radius = query?.radius ?? 500;
-
-    return this.hospitalsService.findByCircle({
-      circleOptions: {
-        longitude,
-        latitude,
-        radius,
-      },
-    });
   }
 }

@@ -1,3 +1,4 @@
+const { execSync } = require('child_process');
 const collectPromisesResults = (callback) => async (prevValues) => {
   const results = await callback(prevValues);
 
@@ -5,8 +6,21 @@ const collectPromisesResults = (callback) => async (prevValues) => {
 };
 
 module.exports = {
-  prompt: ({ prompter, args }) =>
-    prompter
+  prompt: async ({ prompter, args }) => {
+    if (Object.keys(args).length) {
+      return Promise.resolve({
+        name: args.name,
+        property: args.property,
+        kind: args.kind,
+        type: args.type,
+        referenceType: args.referenceType,
+        propertyInReference: args.propertyInReference,
+        isAddToDto: args.isAddToDto === 'true',
+        isOptional: args.isOptional === 'true',
+        isNullable: args.isNullable === 'true',
+      });
+    }
+    const result = await prompter
       .prompt({
         type: 'input',
         name: 'name',
@@ -84,7 +98,8 @@ module.exports = {
                     })
                     .then(
                       collectPromisesResults((referenceValues) => {
-                        return prompter.prompt({
+                        return prompter
+                          .prompt({
                           type: 'select',
                           name: 'referenceType',
                           message: 'Select type of reference',
@@ -106,7 +121,31 @@ module.exports = {
                               value: 'manyToMany',
                             },
                           ],
+                          })
+                          .then(
+                            collectPromisesResults((referenceTypeValues) => {
+                              if (
+                                referenceTypeValues.referenceType ===
+                                'oneToMany'
+                              ) {
+                                return prompter.prompt({
+                                  type: 'input',
+                                  name: 'propertyInReference',
+                                  message: `Property name in ${referenceValues.type} (e.g. 'createdBy')`,
+                                  validate: (input) => {
+                                    if (!input.trim()) {
+                                      return `Property name in ${referenceValues.type} is required`;
+                                    }
+                                    return true;
+                                  },
+                                  format: (input) => {
+                                    return input.trim();
+                                  },
                         });
+                              }
+                              return referenceTypeValues;
+                            }),
+                          );
                       }),
                     );
                 }
@@ -154,5 +193,18 @@ module.exports = {
             initial: true,
           });
         }),
-      ),
+      );
+    if (
+      (result.kind === 'reference' || result.kind === 'duplication') &&
+      result.referenceType === 'oneToMany'
+    ) {
+      execSync(
+        `npm run add:property:to-relational -- --name=${result.type} --property=${result.propertyInReference} --propertyInReference=${result.property} --kind=${result.kind} --type=${result.name} --referenceType=manyToOne --isAddToDto=${result.isAddToDto} --isOptional=false --isNullable=false`,
+        {
+          stdio: 'inherit',
+        },
+      );
+    }
+    return result;
+  },
 };

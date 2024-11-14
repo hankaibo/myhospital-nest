@@ -103,4 +103,8 @@ export class HospitalsService {
   remove(id: Hospital['id']) {
     return this.hospitalRepository.remove(id);
   }
+
+  copy(id: Hospital['id']) {
+    return this.hospitalRepository.copy(id);
+  }
 }

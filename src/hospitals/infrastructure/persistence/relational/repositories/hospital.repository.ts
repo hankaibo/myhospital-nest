@@ -127,4 +127,31 @@ export class HospitalRelationalRepository implements HospitalRepository {
   async remove(id: Hospital['id']): Promise<void> {
     await this.hospitalRepository.delete(id);
   }
+
+  async copy(id: Hospital['id']): Promise<Hospital> {
+    const entity = await this.hospitalRepository.findOne({
+      where: { id },
+    });
+
+    if (!entity) {
+      throw new Error('Record not found');
+    }
+
+    // 创建一个新实体，复制所需的字段，但不复制 id
+    const rest = this.omit(entity, ['id', 'updatedAt', 'createdAt']);
+
+    const newEntity = await this.hospitalRepository.save(
+      this.hospitalRepository.create(rest),
+    );
+
+    return HospitalMapper.toDomain(newEntity);
+  }
+
+  omit<T>(obj: T, keys: (keyof T)[]): Partial<T> {
+    const newObj = { ...obj };
+    keys.forEach((key) => {
+      delete newObj[key];
+    });
+    return newObj;
+  }
 }

@@ -40,4 +40,6 @@ export abstract class HospitalRepository {
   ): Promise<Hospital | null>;
 
   abstract remove(id: Hospital['id']): Promise<void>;
+
+  abstract copy(id: Hospital['id']): Promise<Hospital>;
 }

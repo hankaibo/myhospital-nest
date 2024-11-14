@@ -172,4 +172,15 @@ export class HospitalsController {
   remove(@Param('id') id: string) {
     return this.hospitalsService.remove(id);
   }
+
+  @ApiCreatedResponse({
+    type: Hospital,
+  })
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Post(':id')
+  @HttpCode(HttpStatus.CREATED)
+  copy(@Param('id') id: Hospital['id']): Promise<Hospital> {
+    return this.hospitalsService.copy(id);
+  }
 }

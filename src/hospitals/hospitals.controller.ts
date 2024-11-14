@@ -74,6 +74,30 @@ export class HospitalsController {
   }
 
   @ApiBearerAuth()
+  @ApiOkResponse({
+    type: PaginationResponse(Hospital),
+  })
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Get('pagination')
+  @HttpCode(HttpStatus.OK)
+  async find(
+    @Query() query: FindAllHospitalsDto,
+  ): Promise<PaginationResponseDto<Hospital>> {
+    const { page = 1, limit = 10 } = query;
+
+    const [data, total] =
+      await this.hospitalsService.findAllAndCountWithPagination({
+        sortOptions: query?.sort,
+        paginationOptions: {
+          page,
+          limit,
+        },
+      });
+    return pagination(data, { page, limit }, total);
+  }
+
+  @ApiBearerAuth()
   @Get()
   @ApiOkResponse({
     type: InfinityPaginationResponse(Hospital),
@@ -147,29 +171,5 @@ export class HospitalsController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   remove(@Param('id') id: string) {
     return this.hospitalsService.remove(id);
-  }
-
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    type: PaginationResponse(Hospital),
-  })
-  @Roles(RoleEnum.admin)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Get('all')
-  @HttpCode(HttpStatus.OK)
-  async find(
-    @Query() query: FindAllHospitalsDto,
-  ): Promise<PaginationResponseDto<Hospital>> {
-    const { page = 1, limit = 10 } = query;
-
-    const [data, total] =
-      await this.hospitalsService.findAllAndCountWithPagination({
-        sortOptions: query?.sort,
-        paginationOptions: {
-          page,
-          limit,
-        },
-      });
-    return pagination(data, { page, limit }, total);
   }
 }

@@ -8,6 +8,7 @@ import appConfig from './config/app.config';
 import mailConfig from './mail/config/mail.config';
 import fileConfig from './files/config/file.config';
 import appleConfig from './auth-apple/config/apple.config';
+import amapConfig from './amap/config/amap.config';
 import path from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -41,6 +42,7 @@ const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
         mailConfig,
         fileConfig,
         appleConfig,
+        amapConfig,
       ],
       envFilePath: ['.env'],
     }),

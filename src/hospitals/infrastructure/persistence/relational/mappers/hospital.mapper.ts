@@ -13,8 +13,8 @@ export class HospitalMapper {
     domainEntity.address = raw.address;
     domainEntity.zipCode = raw.zipCode;
     if (raw.lngLat) {
-      domainEntity.lng = 13;
-      domainEntity.lat = 12;
+      domainEntity.lng = raw.lngLat.coordinates[0];
+      domainEntity.lat = raw.lngLat.coordinates[1];
     }
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;

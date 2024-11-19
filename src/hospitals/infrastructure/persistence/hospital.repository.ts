@@ -42,4 +42,6 @@ export abstract class HospitalRepository {
   abstract remove(id: Hospital['id']): Promise<void>;
 
   abstract copy(id: Hospital['id']): Promise<Hospital>;
+
+  abstract sync(name: string): Promise<void>;
 }

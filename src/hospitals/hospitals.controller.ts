@@ -183,4 +183,15 @@ export class HospitalsController {
   copy(@Param('id') id: Hospital['id']): Promise<Hospital> {
     return this.hospitalsService.copy(id);
   }
+
+  @ApiCreatedResponse({
+    type: Hospital,
+  })
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Get('sync/:name')
+  @HttpCode(HttpStatus.OK)
+  sync(@Param('name') name: string): Promise<void> {
+    return this.hospitalsService.sync(name);
+  }
 }

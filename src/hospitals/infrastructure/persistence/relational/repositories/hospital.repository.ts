@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import { firstValueFrom, map } from 'rxjs';
 import { Repository, In, FindOptionsWhere } from 'typeorm';
 import { HospitalEntity } from '../entities/hospital.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
@@ -9,12 +12,15 @@ import { HospitalMapper } from '../mappers/hospital.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 import { ICircleOptions } from '../../../../../utils/types/circle-options';
 import { SortHospitalDto } from '../../../../dto/find-all-hospitals.dto';
+import { AllConfigType } from '../../../../../config/config.type';
 
 @Injectable()
 export class HospitalRelationalRepository implements HospitalRepository {
   constructor(
     @InjectRepository(HospitalEntity)
     private readonly hospitalRepository: Repository<HospitalEntity>,
+    private httpService: HttpService,
+    private configService: ConfigService<AllConfigType>,
   ) {}
 
   async create(data: Hospital): Promise<Hospital> {
@@ -145,6 +151,96 @@ export class HospitalRelationalRepository implements HospitalRepository {
     );
 
     return HospitalMapper.toDomain(newEntity);
+  }
+
+  async sync(name: string): Promise<void> {
+    const hospitals = await this.hospitalRepository.find();
+
+    const hospitalNoWithLngLat = hospitals.filter(
+      (hospital) => !hospital.lngLat,
+    );
+
+    if (!hospitalNoWithLngLat.length) {
+      return;
+    }
+
+    const url = this.configService.get('amap.url', { infer: true }) || '';
+    const key = this.configService.get('amap.key', { infer: true });
+
+    const SAVE_BATCH_SIZE = 1000; // 每次保存到数据库的医院数
+    const REQUEST_DELAY = 500; // 每秒最多 2 次请求（500 毫秒间隔）
+
+    let updatedHospitals: HospitalEntity[] = [];
+
+    const throttleRequest = async (hospital: HospitalEntity) => {
+      const payload = {
+        key,
+        address: hospital.address,
+        city: name,
+      };
+
+      try {
+        const response = await firstValueFrom(
+          this.httpService
+            .get(url, { params: payload })
+            .pipe(map((res) => res.data)),
+        );
+
+        if (
+          response.info.toLowerCase() !== 'ok' ||
+          Number.parseInt(response.count, 10) !== 1
+        ) {
+          console.error('Failed to fetch geocode data:', response);
+          return;
+        }
+
+        const geocode = response.geocodes?.[0];
+
+        if (!geocode || !geocode.location || !geocode.adcode) {
+          console.warn(`No geocode data found for hospital: ${hospital.name}`);
+          hospital.zipCode = null;
+        } else {
+          const [lng, lat] = geocode.location.split(',').map(parseFloat);
+
+          // Update geometry field
+          hospital.lngLat = {
+            type: 'Point',
+            coordinates: [lng, lat],
+          };
+
+          hospital.zipCode = geocode.adcode;
+        }
+
+        updatedHospitals.push(hospital);
+
+        // 每 SAVE_BATCH_SIZE 个保存一次
+        if (updatedHospitals.length >= SAVE_BATCH_SIZE) {
+          await this.hospitalRepository.save(updatedHospitals);
+          updatedHospitals = []; // 清空临时存储
+        }
+      } catch (error) {
+        console.error(
+          `Error fetching geocode for hospital: ${hospital.name}`,
+          error,
+        );
+      }
+    };
+
+    try {
+      for (const hospital of hospitalNoWithLngLat) {
+        await throttleRequest(hospital);
+
+        // 每次请求后等待 500 毫秒
+        await new Promise((resolve) => setTimeout(resolve, REQUEST_DELAY));
+      }
+
+      // 保存剩余的医院
+      if (updatedHospitals.length > 0) {
+        await this.hospitalRepository.save(updatedHospitals);
+      }
+    } catch (error) {
+      console.error('Error during synchronization:', error);
+    }
   }
 
   omit<T>(obj: T, keys: (keyof T)[]): Partial<T> {

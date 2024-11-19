@@ -107,4 +107,8 @@ export class HospitalsService {
   copy(id: Hospital['id']) {
     return this.hospitalRepository.copy(id);
   }
+
+  async sync(name: string) {
+    return await this.hospitalRepository.sync(name);
+  }
 }

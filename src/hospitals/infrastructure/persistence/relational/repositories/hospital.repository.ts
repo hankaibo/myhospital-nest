@@ -3,7 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom, map } from 'rxjs';
-import { Repository, In, FindOptionsWhere } from 'typeorm';
+import { Repository, In, FindOptionsWhere, IsNull } from 'typeorm';
 import { HospitalEntity } from '../entities/hospital.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Hospital } from '../../../../domain/hospital';
@@ -153,7 +153,7 @@ export class HospitalRelationalRepository implements HospitalRepository {
     return HospitalMapper.toDomain(newEntity);
   }
 
-  async copyAll(): Promise<void> {
+  async copyAll(separator: string): Promise<void> {
     // const SAVE_BATCH_SIZE = 1000; // 每次保存到数据库的医院数
     // const updatedHospitals: HospitalEntity[] = [];
 
@@ -206,7 +206,10 @@ export class HospitalRelationalRepository implements HospitalRepository {
     // });
 
     // ---------------------------------------------------------------
-    const hospitals = await this.hospitalRepository.find();
+    const hospitals = await this.hospitalRepository
+      .createQueryBuilder('hospital')
+      .where('hospital.address LIKE :pattern', { pattern: `%${separator}%` })
+      .getMany();
 
     if (!hospitals.length) {
       return;
@@ -214,46 +217,51 @@ export class HospitalRelationalRepository implements HospitalRepository {
 
     const SAVE_BATCH_SIZE = 1000; // 每次保存到数据库的医院数
     const updatedHospitals: HospitalEntity[] = [];
+    const deleteIds: string[] = [];
 
     for (const hospital of hospitals) {
-      if (hospital.address?.includes('、')) {
-        const newAddresses = hospital.address.split('、');
+      const newAddresses = hospital.address?.split(separator) || [];
 
-        for (const address of newAddresses) {
-          const rest = this.omit(hospital, [
-            'id',
-            'lngLat',
-            'address',
-            'updatedAt',
-            'createdAt',
-          ]);
-          rest.address = address;
-          const newEntity = this.hospitalRepository.create(rest);
-          updatedHospitals.push(newEntity);
+      for (const address of newAddresses) {
+        const rest = this.omit(hospital, [
+          'id',
+          'lngLat',
+          'address',
+          'updatedAt',
+          'createdAt',
+        ]);
+        rest.address = address;
+        const newEntity = this.hospitalRepository.create(rest);
+        updatedHospitals.push(newEntity);
 
-          // 每 SAVE_BATCH_SIZE 个保存一次
-          if (updatedHospitals.length >= SAVE_BATCH_SIZE) {
-            await this.hospitalRepository.save(updatedHospitals);
-            updatedHospitals.length = 0; // 清空临时存储
-          }
+        // 每 SAVE_BATCH_SIZE 个保存一次
+        if (updatedHospitals.length >= SAVE_BATCH_SIZE) {
+          await this.hospitalRepository.save(updatedHospitals);
+          updatedHospitals.length = 0; // 清空临时存储
         }
       }
+
+      deleteIds.push(hospital.id);
     }
 
     // 保存剩余的医院
     if (updatedHospitals.length > 0) {
       await this.hospitalRepository.save(updatedHospitals);
     }
+
+    if (deleteIds.length) {
+      await this.hospitalRepository.delete(deleteIds);
+    }
   }
 
   async sync(name: string): Promise<void> {
-    const hospitals = await this.hospitalRepository.find();
+    const hospitals = await this.hospitalRepository.find({
+      where: {
+        lngLat: IsNull(),
+      },
+    });
 
-    const hospitalNoWithLngLat = hospitals.filter(
-      (hospital) => !hospital.lngLat,
-    );
-
-    if (!hospitalNoWithLngLat.length) {
+    if (!hospitals.length) {
       return;
     }
 
@@ -280,8 +288,8 @@ export class HospitalRelationalRepository implements HospitalRepository {
         );
 
         if (
-          response.info.toLowerCase() !== 'ok' ||
-          Number.parseInt(response.count, 10) !== 1
+          response.info.toLowerCase() !== 'ok'
+          // Number.parseInt(response.count, 10) !== 1
         ) {
           console.error('Failed to fetch geocode data:', response);
           return;
@@ -320,7 +328,7 @@ export class HospitalRelationalRepository implements HospitalRepository {
     };
 
     try {
-      for (const hospital of hospitalNoWithLngLat) {
+      for (const hospital of hospitals) {
         await throttleRequest(hospital);
 
         // 每次请求后等待 500 毫秒

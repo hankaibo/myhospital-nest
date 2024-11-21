@@ -2,7 +2,10 @@ import { DeepPartial } from '../../../utils/types/deep-partial.type';
 import { NullableType } from '../../../utils/types/nullable.type';
 import { IPaginationOptions } from '../../../utils/types/pagination-options';
 import { ICircleOptions } from '../../../utils/types/circle-options';
-import { SortHospitalDto } from '../../dto/find-all-hospitals.dto';
+import {
+  SortHospitalDto,
+  FilterHospitalDto,
+} from '../../dto/find-all-hospitals.dto';
 import { Hospital } from '../../domain/hospital';
 
 export abstract class HospitalRepository {
@@ -18,9 +21,11 @@ export abstract class HospitalRepository {
 
   abstract findAllAndCountWithPagination({
     sortOptions,
+    filterOptions,
     paginationOptions,
   }: {
     sortOptions?: SortHospitalDto[] | null;
+    filterOptions?: FilterHospitalDto | null;
     paginationOptions: IPaginationOptions;
   }): Promise<[Hospital[], number]>;
 

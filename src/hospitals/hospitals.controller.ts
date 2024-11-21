@@ -36,7 +36,7 @@ import {
 } from '../utils/dto/pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { pagination } from '../utils/pagination';
-import { FindAllHospitalsDto } from './dto/find-all-hospitals.dto';
+import { QueryHospitalsDto } from './dto/find-all-hospitals.dto';
 
 @ApiTags('Hospitals')
 @Controller({
@@ -48,10 +48,10 @@ export class HospitalsController {
 
   @Get('circle')
   @HttpCode(HttpStatus.OK)
-  findWithCircle(@Query() query: FindAllHospitalsDto): Promise<Hospital[]> {
-    const longitude = query?.longitude ?? 116.4074;
-    const latitude = query?.latitude ?? 39.9042;
-    const radius = query?.radius ?? 500;
+  findWithCircle(@Query() query: QueryHospitalsDto): Promise<Hospital[]> {
+    const longitude = query?.filters?.longitude ?? 116.4074;
+    const latitude = query?.filters?.latitude ?? 39.9042;
+    const radius = query?.filters?.radius ?? 500;
 
     return this.hospitalsService.findByCircle({
       circleOptions: {
@@ -82,13 +82,14 @@ export class HospitalsController {
   @Get('pagination')
   @HttpCode(HttpStatus.OK)
   async find(
-    @Query() query: FindAllHospitalsDto,
+    @Query() query: QueryHospitalsDto,
   ): Promise<PaginationResponseDto<Hospital>> {
     const { page = 1, limit = 10 } = query;
 
     const [data, total] =
       await this.hospitalsService.findAllAndCountWithPagination({
         sortOptions: query?.sort,
+        filterOptions: query?.filters,
         paginationOptions: {
           page,
           limit,
@@ -106,7 +107,7 @@ export class HospitalsController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @HttpCode(HttpStatus.OK)
   async findAll(
-    @Query() query: FindAllHospitalsDto,
+    @Query() query: QueryHospitalsDto,
   ): Promise<InfinityPaginationResponseDto<Hospital>> {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;

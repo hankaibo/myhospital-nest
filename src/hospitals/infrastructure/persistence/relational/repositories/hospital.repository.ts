@@ -11,7 +11,10 @@ import { HospitalRepository } from '../../hospital.repository';
 import { HospitalMapper } from '../mappers/hospital.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 import { ICircleOptions } from '../../../../../utils/types/circle-options';
-import { SortHospitalDto } from '../../../../dto/find-all-hospitals.dto';
+import {
+  SortHospitalDto,
+  FilterHospitalDto,
+} from '../../../../dto/find-all-hospitals.dto';
 import { AllConfigType } from '../../../../../config/config.type';
 
 @Injectable()
@@ -46,12 +49,20 @@ export class HospitalRelationalRepository implements HospitalRepository {
 
   async findAllAndCountWithPagination({
     sortOptions,
+    filterOptions,
     paginationOptions,
   }: {
     sortOptions?: SortHospitalDto[] | null;
+    filterOptions?: FilterHospitalDto | null;
     paginationOptions: IPaginationOptions;
   }): Promise<[Hospital[], number]> {
     const where: FindOptionsWhere<HospitalEntity> = {};
+    if (filterOptions?.code) {
+      where.code = filterOptions.code;
+    }
+    if (filterOptions?.name) {
+      where.name = filterOptions.name;
+    }
 
     const [entities, total] = await this.hospitalRepository.findAndCount({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
@@ -214,6 +225,7 @@ export class HospitalRelationalRepository implements HospitalRepository {
 
     const SAVE_BATCH_SIZE = 1000; // 每次保存到数据库的医院数
     const updatedHospitals: HospitalEntity[] = [];
+    const idsToDelete: string[] = []; // 用于记录需要删除的医院ID
 
     for (const hospital of hospitals) {
       if (hospital.address?.includes('、')) {
@@ -237,12 +249,20 @@ export class HospitalRelationalRepository implements HospitalRepository {
             updatedHospitals.length = 0; // 清空临时存储
           }
         }
+
+        // 将当前医院的 ID 加入待删除列表
+        idsToDelete.push(hospital.id);
       }
     }
 
     // 保存剩余的医院
     if (updatedHospitals.length > 0) {
       await this.hospitalRepository.save(updatedHospitals);
+    }
+
+    // 删除包含多个地址的原始记录
+    if (idsToDelete.length > 0) {
+      await this.hospitalRepository.delete(idsToDelete);
     }
   }
 

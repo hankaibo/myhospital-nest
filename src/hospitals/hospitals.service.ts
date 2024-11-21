@@ -4,7 +4,10 @@ import { UpdateHospitalDto } from './dto/update-hospital.dto';
 import { HospitalRepository } from './infrastructure/persistence/hospital.repository';
 import { IPaginationOptions } from '../utils/types/pagination-options';
 import { ICircleOptions } from '../utils/types/circle-options';
-import { SortHospitalDto } from './dto/find-all-hospitals.dto';
+import {
+  SortHospitalDto,
+  FilterHospitalDto,
+} from './dto/find-all-hospitals.dto';
 import { Hospital } from './domain/hospital';
 
 @Injectable()
@@ -56,13 +59,16 @@ export class HospitalsService {
 
   async findAllAndCountWithPagination({
     sortOptions,
+    filterOptions,
     paginationOptions,
   }: {
     sortOptions?: SortHospitalDto[] | null;
+    filterOptions?: FilterHospitalDto | null;
     paginationOptions: IPaginationOptions;
   }) {
     return await this.hospitalRepository.findAllAndCountWithPagination({
       sortOptions,
+      filterOptions,
       paginationOptions,
     });
   }

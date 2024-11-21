@@ -153,6 +153,99 @@ export class HospitalRelationalRepository implements HospitalRepository {
     return HospitalMapper.toDomain(newEntity);
   }
 
+  async copyAll(): Promise<void> {
+    // const SAVE_BATCH_SIZE = 1000; // 每次保存到数据库的医院数
+    // const updatedHospitals: HospitalEntity[] = [];
+
+    // // 获取数据库流
+    // const stream = await this.hospitalRepository
+    //   .createQueryBuilder('hospital')
+    //   .select([
+    //     'hospital.name',
+    //     'hospital.code',
+    //     'hospital.type',
+    //     'hospital.lvl',
+    //     'hospital.address',
+    //     'hospital.introduction',
+    //   ])
+    //   .stream();
+
+    // return new Promise((resolve, reject) => {
+    //   stream.on('data', async (row: Partial<HospitalEntity>) => {
+    //     const hospital = row; // 每次读取一条记录
+    //     if (hospital.address?.includes('、')) {
+    //       const newAddresses = hospital.address.split('、');
+
+    //       for (const address of newAddresses) {
+    //         hospital.address = address;
+    //         const newEntity = this.hospitalRepository.create(hospital);
+    //         updatedHospitals.push(newEntity);
+
+    //         // 每 SAVE_BATCH_SIZE 个保存一次
+    //         if (updatedHospitals.length >= SAVE_BATCH_SIZE) {
+    //           await this.hospitalRepository.save(updatedHospitals);
+    //           updatedHospitals.length = 0; // 清空临时存储
+    //         }
+    //       }
+    //     }
+    //   });
+
+    //   stream.on('end', async () => {
+    //     // 保存剩余的医院
+    //     if (updatedHospitals.length > 0) {
+    //       await this.hospitalRepository.save(updatedHospitals);
+    //     }
+    //     console.log('Stream processing completed.');
+    //     resolve();
+    //   });
+
+    //   stream.on('error', (error) => {
+    //     console.error('Error during stream processing:', error);
+    //     reject(error);
+    //   });
+    // });
+
+    // ---------------------------------------------------------------
+    const hospitals = await this.hospitalRepository.find();
+
+    if (!hospitals.length) {
+      return;
+    }
+
+    const SAVE_BATCH_SIZE = 1000; // 每次保存到数据库的医院数
+    const updatedHospitals: HospitalEntity[] = [];
+
+    for (const hospital of hospitals) {
+      if (hospital.address?.includes('、')) {
+        const newAddresses = hospital.address.split('、');
+
+        for (const address of newAddresses) {
+          const rest = this.omit(hospital, [
+            'id',
+            'lngLat',
+            'address',
+            'updatedAt',
+            'createdAt',
+          ]);
+          rest.address = address;
+          const newEntity = this.hospitalRepository.create(rest);
+          updatedHospitals.push(newEntity);
+
+          // 每 SAVE_BATCH_SIZE 个保存一次
+          if (updatedHospitals.length >= SAVE_BATCH_SIZE) {
+            await this.hospitalRepository.save(updatedHospitals);
+            updatedHospitals.length = 0; // 清空临时存储
+          }
+        }
+      }
+    }
+
+    // 保存剩余的医院
+    if (updatedHospitals.length > 0) {
+      await this.hospitalRepository.save(updatedHospitals);
+    }
+  }
+
   async sync(name: string): Promise<void> {
     const hospitals = await this.hospitalRepository.find();
 

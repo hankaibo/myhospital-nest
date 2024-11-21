@@ -108,6 +108,10 @@ export class HospitalsService {
     return this.hospitalRepository.copy(id);
   }
 
+  copyAll() {
+    return this.hospitalRepository.copyAll();
+  }
+
   async sync(name: string) {
     return await this.hospitalRepository.sync(name);
   }

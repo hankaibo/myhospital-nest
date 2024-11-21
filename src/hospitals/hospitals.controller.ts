@@ -178,10 +178,18 @@ export class HospitalsController {
   })
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Post(':id')
+  @Post(':id/copy')
   @HttpCode(HttpStatus.CREATED)
   copy(@Param('id') id: Hospital['id']): Promise<Hospital> {
     return this.hospitalsService.copy(id);
+  }
+
+  @ApiBearerAuth()
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Post('copy')
+  copyAll(): Promise<void> {
+    return this.hospitalsService.copyAll();
   }
 
   @ApiCreatedResponse({

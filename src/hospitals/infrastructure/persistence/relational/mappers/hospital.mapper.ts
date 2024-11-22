@@ -26,6 +26,12 @@ export class HospitalMapper {
     if (domainEntity.id) {
       persistenceEntity.id = domainEntity.id;
     }
+    if (domainEntity.lng !== null && domainEntity.lat !== null) {
+      persistenceEntity.lngLat = {
+        type: 'Point',
+        coordinates: [domainEntity.lng, domainEntity.lat],
+      };
+    }
     persistenceEntity.name = domainEntity.name;
     persistenceEntity.code = domainEntity.code;
     persistenceEntity.district = domainEntity.district;

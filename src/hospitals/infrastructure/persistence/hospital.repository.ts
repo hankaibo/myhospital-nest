@@ -48,7 +48,7 @@ export abstract class HospitalRepository {
 
   abstract copy(id: Hospital['id']): Promise<Hospital>;
 
-  abstract copyAll(): Promise<void>;
+  abstract copyAll(separator: string): Promise<void>;
 
   abstract sync(name: string): Promise<void>;
 }

@@ -190,7 +190,7 @@ export class HospitalsController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post('copy')
   copyAll(): Promise<void> {
-    return this.hospitalsService.copyAll();
+    return this.hospitalsService.copyAll('；');
   }
 
   @ApiCreatedResponse({

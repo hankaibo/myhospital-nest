@@ -114,8 +114,8 @@ export class HospitalsService {
     return this.hospitalRepository.copy(id);
   }
 
-  copyAll() {
-    return this.hospitalRepository.copyAll();
+  copyAll(separator: string) {
+    return this.hospitalRepository.copyAll(separator);
   }
 
   async sync(name: string) {

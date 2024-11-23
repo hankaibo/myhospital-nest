@@ -63,6 +63,12 @@ export class HospitalRelationalRepository implements HospitalRepository {
     if (filterOptions?.name) {
       where.name = filterOptions.name;
     }
+    if (filterOptions?.type) {
+      where.type = filterOptions.type;
+    }
+    if (filterOptions?.lvl) {
+      where.lvl = filterOptions.lvl;
+    }
 
     const [entities, total] = await this.hospitalRepository.findAndCount({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,

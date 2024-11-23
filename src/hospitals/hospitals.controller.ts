@@ -51,7 +51,11 @@ export class HospitalsController {
   findWithCircle(@Query() query: QueryHospitalsDto): Promise<Hospital[]> {
     const longitude = query?.filters?.longitude ?? 116.4074;
     const latitude = query?.filters?.latitude ?? 39.9042;
-    const radius = query?.filters?.radius ?? 500;
+    let radius = query?.filters?.radius ?? 500;
+
+    if (radius > 1000) {
+      radius = 1000;
+    }
 
     return this.hospitalsService.findByCircle({
       circleOptions: {

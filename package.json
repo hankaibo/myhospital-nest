@@ -83,7 +83,7 @@
     "@nestjs/testing": "10.4.8",
     "@release-it/conventional-changelog": "9.0.3",
     "@swc/cli": "0.5.1",
-    "@swc/core": "1.9.2",
+    "@swc/core": "1.9.3",
     "@types/bcryptjs": "2.4.6",
     "@types/express": "5.0.0",
     "@types/geojson": "^7946.0.14",

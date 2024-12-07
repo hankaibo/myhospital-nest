@@ -15,6 +15,12 @@ export class HospitalEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({
+    nullable: true,
+    type: String,
+  })
+  city?: string | null;
+
   @Column({ type: String, nullable: true })
   name: string | null;
 

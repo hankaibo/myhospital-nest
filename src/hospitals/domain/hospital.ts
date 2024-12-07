@@ -6,6 +6,12 @@ export class Hospital {
   })
   id: string;
 
+  @ApiProperty({
+    type: () => String,
+    nullable: true,
+  })
+  city?: string | null;
+
   @ApiProperty({ type: String })
   name: string | null;
 

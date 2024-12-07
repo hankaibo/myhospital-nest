@@ -1,7 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 export class CreateHospitalDto {
+  @ApiProperty({
+    required: false,
+    type: () => String,
+  })
+  @IsOptional()
+  @IsString()
+  city?: string | null;
+
   @ApiProperty({ type: String })
   @IsNotEmpty()
   name: string | null;

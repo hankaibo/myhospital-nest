@@ -20,9 +20,12 @@ export class HospitalsService {
   async create(createHospitalDto: CreateHospitalDto) {
     // Do not remove comment below.
     // <creating-property />
+
     return this.hospitalRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
+      city: createHospitalDto.city,
+
       name: createHospitalDto.name,
       code: createHospitalDto.code,
       district: createHospitalDto.district,
@@ -90,9 +93,12 @@ export class HospitalsService {
   ) {
     // Do not remove comment below.
     // <updating-property />
+
     return this.hospitalRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      city: updateHospitalDto.city,
+
       name: updateHospitalDto.name,
       code: updateHospitalDto.code,
       district: updateHospitalDto.district,

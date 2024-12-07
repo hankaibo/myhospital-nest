@@ -4,7 +4,9 @@ import { HospitalEntity } from '../entities/hospital.entity';
 export class HospitalMapper {
   static toDomain(raw: HospitalEntity): Hospital {
     const domainEntity = new Hospital();
+
     domainEntity.id = raw.id;
+    domainEntity.city = raw.city;
     domainEntity.name = raw.name;
     domainEntity.code = raw.code;
     domainEntity.district = raw.district;
@@ -23,6 +25,7 @@ export class HospitalMapper {
 
   static toPersistence(domainEntity: Hospital): HospitalEntity {
     const persistenceEntity = new HospitalEntity();
+
     if (domainEntity.id) {
       persistenceEntity.id = domainEntity.id;
     }
@@ -32,6 +35,7 @@ export class HospitalMapper {
         coordinates: [domainEntity.lng, domainEntity.lat],
       };
     }
+    persistenceEntity.city = domainEntity.city;
     persistenceEntity.name = domainEntity.name;
     persistenceEntity.code = domainEntity.code;
     persistenceEntity.district = domainEntity.district;

@@ -21,6 +21,7 @@ export class <%= h.inflection.transform(name, ['pluralize']) %>Service {
   ) {
     // Do not remove comment below.
     // <creating-property />
+
     return this.<%= h.inflection.camelize(name, true) %>Repository.create({
       // Do not remove comment below.
       // <creating-property-payload />
@@ -47,6 +48,7 @@ export class <%= h.inflection.transform(name, ['pluralize']) %>Service {
   findByIds(ids: <%= name %>['id'][]) {
     return this.<%= h.inflection.camelize(name, true) %>Repository.findByIds(ids);
   }
+
   async update(
     id: <%= name %>['id'],
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -54,6 +56,7 @@ export class <%= h.inflection.transform(name, ['pluralize']) %>Service {
   ) {
     // Do not remove comment below.
     // <updating-property />
+
     return this.<%= h.inflection.camelize(name, true) %>Repository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />

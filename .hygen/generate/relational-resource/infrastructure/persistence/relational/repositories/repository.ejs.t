@@ -51,9 +51,10 @@ export class <%= name %>RelationalRepository implements <%= name %>Repository {
     const entities = await this.<%= h.inflection.camelize(name, true) %>Repository.find({
       where: { id: In(ids) },
     });
+
     return entities.map((entity) => <%= name %>Mapper.toDomain(entity));
   }
-  
+
   async update(
     id: <%= name %>['id'],
     payload: Partial<<%= name %>>,

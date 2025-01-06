@@ -1,4 +1,5 @@
 const { execSync } = require('child_process');
+
 const collectPromisesResults = (callback) => async (prevValues) => {
   const results = await callback(prevValues);
 
@@ -20,6 +21,7 @@ module.exports = {
         isNullable: args.isNullable === 'true',
       });
     }
+
     const result = await prompter
       .prompt({
         type: 'input',
@@ -100,27 +102,27 @@ module.exports = {
                       collectPromisesResults((referenceValues) => {
                         return prompter
                           .prompt({
-                          type: 'select',
-                          name: 'referenceType',
-                          message: 'Select type of reference',
-                          choices: [
-                            {
-                              message: `One to one (${rootValues.name} contains only one instance of ${referenceValues.type}, and ${referenceValues.type} contains only one instance of ${rootValues.name}. ${rootValues.property}: ${referenceValues.type})`,
-                              value: 'oneToOne',
-                            },
-                            {
-                              message: `One to many (${rootValues.name} contains multiple instances of ${referenceValues.type}, but ${referenceValues.type} contains only one instance of ${rootValues.name}. ${rootValues.property}: ${referenceValues.type}[])`,
-                              value: 'oneToMany',
-                            },
-                            {
-                              message: `Many to one (${rootValues.name} contains only one instance of ${referenceValues.type}, but ${referenceValues.type} contains multiple instances of ${rootValues.name}. ${rootValues.property}: ${referenceValues.type})`,
-                              value: 'manyToOne',
-                            },
-                            {
-                              message: `Many to many (${rootValues.name} contains multiple instances of ${referenceValues.type}, and ${referenceValues.type} contains multiple instances of ${rootValues.name}. ${rootValues.property}: ${referenceValues.type}[])`,
-                              value: 'manyToMany',
-                            },
-                          ],
+                            type: 'select',
+                            name: 'referenceType',
+                            message: 'Select type of reference',
+                            choices: [
+                              {
+                                message: `One to one (${rootValues.name} contains only one instance of ${referenceValues.type}, and ${referenceValues.type} contains only one instance of ${rootValues.name}. ${rootValues.property}: ${referenceValues.type})`,
+                                value: 'oneToOne',
+                              },
+                              {
+                                message: `One to many (${rootValues.name} contains multiple instances of ${referenceValues.type}, but ${referenceValues.type} contains only one instance of ${rootValues.name}. ${rootValues.property}: ${referenceValues.type}[])`,
+                                value: 'oneToMany',
+                              },
+                              {
+                                message: `Many to one (${rootValues.name} contains only one instance of ${referenceValues.type}, but ${referenceValues.type} contains multiple instances of ${rootValues.name}. ${rootValues.property}: ${referenceValues.type})`,
+                                value: 'manyToOne',
+                              },
+                              {
+                                message: `Many to many (${rootValues.name} contains multiple instances of ${referenceValues.type}, and ${referenceValues.type} contains multiple instances of ${rootValues.name}. ${rootValues.property}: ${referenceValues.type}[])`,
+                                value: 'manyToMany',
+                              },
+                            ],
                           })
                           .then(
                             collectPromisesResults((referenceTypeValues) => {
@@ -136,13 +138,15 @@ module.exports = {
                                     if (!input.trim()) {
                                       return `Property name in ${referenceValues.type} is required`;
                                     }
+
                                     return true;
                                   },
                                   format: (input) => {
                                     return input.trim();
                                   },
-                        });
+                                });
                               }
+
                               return referenceTypeValues;
                             }),
                           );
@@ -194,17 +198,23 @@ module.exports = {
           });
         }),
       );
+
+    if (!result.propertyInReference) {
+      result.propertyInReference = '';
+    }
+
     if (
       (result.kind === 'reference' || result.kind === 'duplication') &&
       result.referenceType === 'oneToMany'
     ) {
       execSync(
-        `npm run add:property:to-relational -- --name=${result.type} --property=${result.propertyInReference} --propertyInReference=${result.property} --kind=${result.kind} --type=${result.name} --referenceType=manyToOne --isAddToDto=${result.isAddToDto} --isOptional=false --isNullable=false`,
+        `npm run add:property:to-relational -- --name ${result.type} --property ${result.propertyInReference} --propertyInReference ${result.property} --kind ${result.kind} --type ${result.name} --referenceType manyToOne --isAddToDto ${result.isAddToDto} --isOptional false --isNullable false`,
         {
           stdio: 'inherit',
         },
       );
     }
+
     return result;
   },
 };

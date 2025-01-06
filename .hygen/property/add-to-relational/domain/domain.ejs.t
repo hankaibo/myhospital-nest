@@ -23,6 +23,7 @@ after: export class <%= name %> {
     <% } -%>
   nullable: <%= isNullable %>,
 })
+
 <% if (kind === 'reference' || kind === 'duplication') { -%>
   <%= property %><% if (!isAddToDto || isOptional) { -%>?<% } -%>: <%= type %><% if (type === 'File') { -%>Type<% } -%><% if (referenceType === 'oneToMany' || referenceType === 'manyToMany') { -%>[]<% } -%> <% if (isNullable) { -%> | null<% } -%>;
 <% } else { -%>

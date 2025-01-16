@@ -37,8 +37,8 @@
     "release": "release-it"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.717.0",
-    "@aws-sdk/s3-request-presigner": "3.717.0",
+    "@aws-sdk/client-s3": "3.729.0",
+    "@aws-sdk/s3-request-presigner": "3.729.0",
     "@nestjs/axios": "^3.1.2",
     "@nestjs/common": "10.4.15",
     "@nestjs/config": "3.3.0",

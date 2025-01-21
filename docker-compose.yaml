@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:17.2-alpine
+    image: postgis/postgis:17-3.4-alpine
     ports:
       - ${DATABASE_PORT}:5432
     volumes:
@@ -17,6 +17,7 @@ services:
     ports:
       - ${MAIL_CLIENT_PORT}:1080
       - ${MAIL_PORT}:1025
+
   adminer:
     image: adminer
     restart: always
@@ -35,5 +36,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - ${APP_PORT}:${APP_PORT}
+
 volumes:
   boilerplate-db:

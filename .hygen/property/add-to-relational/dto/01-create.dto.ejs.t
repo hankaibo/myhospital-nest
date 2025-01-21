@@ -9,12 +9,14 @@ after: export class Create<%= name %>Dto
     required: <%= !(isOptional || isNullable) %>,
     type: () => 
       <% if (kind === 'primitive') { -%>
-  <% if (type === 'string') { -%>
+        <% if (type === 'string') { -%>
           String,
         <% } else if (type === 'number') { -%>
           Number,
         <% } else if (type === 'boolean') { -%>
           Boolean,
+        <% } else if (type === 'Date') { -%>
+          Date,
         <% } -%>
       <% } else if (kind === 'reference' || kind === 'duplication') { -%>
         <% if (referenceType === 'oneToMany' || referenceType === 'manyToMany') { -%>
@@ -25,6 +27,7 @@ after: export class Create<%= name %>Dto
       <% } -%>
   })
 <% } -%>
+
 <% if (isAddToDto) { -%>
   <% if (isOptional || isNullable) { -%>
     @IsOptional()
@@ -33,10 +36,13 @@ after: export class Create<%= name %>Dto
     <% if (type === 'string') { -%>
       @IsString()
     <% } else if (type === 'number') { -%>
-  @IsNumber()
+      @IsNumber()
     <% } else if (type === 'boolean') { -%>
-  @IsBoolean()
-  <% } -%>
+      @IsBoolean()
+    <% } else if (type === 'Date') { -%>
+      @Transform(({ value }) => new Date(value))
+      @IsDate()
+    <% } -%>
   <% } else if (kind === 'reference' || kind === 'duplication') { -%>
     @ValidateNested()
     @Type(() => <%= type %>Dto)
@@ -47,6 +53,7 @@ after: export class Create<%= name %>Dto
     <% } -%>
   <% } -%>
 <% } -%>
+
 <% if (kind === 'reference' || kind === 'duplication') { -%>
   <%= property %><% if (!isAddToDto || isOptional) { -%>?<% } -%>: <%= type %>Dto<% if (referenceType === 'oneToMany' || referenceType === 'manyToMany') { -%>[]<% } -%> <% if (isNullable) { -%> | null<% } -%>;
 <% } else { -%>

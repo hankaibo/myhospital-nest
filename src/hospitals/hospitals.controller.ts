@@ -36,7 +36,10 @@ import {
 } from '../utils/dto/pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { pagination } from '../utils/pagination';
-import { QueryHospitalsDto } from './dto/find-all-hospitals.dto';
+import {
+  QueryHospitalsDto,
+  FilterHospitalDto,
+} from './dto/find-all-hospitals.dto';
 
 @ApiTags('Hospitals')
 @Controller({
@@ -48,10 +51,10 @@ export class HospitalsController {
 
   @Get('circle')
   @HttpCode(HttpStatus.OK)
-  findWithCircle(@Query() query: QueryHospitalsDto): Promise<Hospital[]> {
-    const longitude = query?.filters?.longitude ?? 116.4074;
-    const latitude = query?.filters?.latitude ?? 39.9042;
-    let radius = query?.filters?.radius ?? 500;
+  findWithCircle(@Query() query: FilterHospitalDto): Promise<Hospital[]> {
+    const longitude = query.longitude;
+    const latitude = query.latitude;
+    let radius = query.radius;
 
     if (radius > 1000) {
       radius = 1000;

@@ -181,6 +181,7 @@ export class HospitalsController {
     return this.hospitalsService.remove(id);
   }
 
+  @ApiBearerAuth()
   @ApiCreatedResponse({
     type: Hospital,
   })
@@ -200,6 +201,7 @@ export class HospitalsController {
     return this.hospitalsService.copyAll('；');
   }
 
+  @ApiBearerAuth()
   @ApiCreatedResponse({
     type: Hospital,
   })

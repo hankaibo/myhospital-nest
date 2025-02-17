@@ -326,7 +326,7 @@ export class AuthService {
       infer: true,
     });
 
-    const tokenExpires = Date.now() + ms(tokenExpiresIn as ms.StringValue);
+    const tokenExpires = Date.now() + ms(tokenExpiresIn);
 
     const hash = await this.jwtService.signAsync(
       {
@@ -554,7 +554,7 @@ export class AuthService {
       infer: true,
     });
 
-    const tokenExpires = Date.now() + ms(tokenExpiresIn as ms.StringValue);
+    const tokenExpires = Date.now() + ms(tokenExpiresIn);
 
     const [token, refreshToken] = await Promise.all([
       await this.jwtService.signAsync(

@@ -90,7 +90,7 @@
     "@types/jest": "29.5.14",
     "@types/ms": "2.1.0",
     "@types/multer": "1.4.12",
-    "@types/node": "22.10.7",
+    "@types/node": "22.13.9",
     "@types/passport-anonymous": "1.0.5",
     "@types/passport-jwt": "4.0.1",
     "@types/supertest": "6.0.2",
@@ -199,6 +199,6 @@
     }
   },
   "volta": {
-    "node": "22.13.1"
+    "node": "22.14.0"
   }
 }

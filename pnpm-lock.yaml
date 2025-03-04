@@ -194,7 +194,7 @@ importers:
         version: 5.2.3(@types/eslint@8.56.1)(eslint-config-prettier@10.0.1(eslint@9.18.0(jiti@2.4.2)))(eslint@9.18.0(jiti@2.4.2))(prettier@3.4.2)
       globals:
         specifier: ^15.14.0
-        version: 15.14.0
+        version: 15.15.0
       husky:
         specifier: 9.1.7
         version: 9.1.7
@@ -305,6 +305,7 @@ packages:
   '@aws-sdk/client-s3@3.732.0':
     resolution: {integrity: sha512-ITPcG40qdiLXZRvNQ8V3u4yB16afcdIabdRBN6Blba31rk0MfeBGWwah0+lLSTFo1ZIrIQvBl6PAQ7mO0mkKLg==}
     engines: {node: '>=18.0.0'}
+    deprecated: Please upgrade to >=3.735.0, which contains fixes for checksum validation in S3 getObject calls. Details https://github.com/aws/aws-sdk-js-v3/issues/6827
 
   '@aws-sdk/client-sso@3.731.0':
     resolution: {integrity: sha512-O4C/UYGgqMsBg21MMApFdgyh8BX568hQhbdoNFmRVTBoSnCZ3w+H4a1wBPX4Gyl0NX+ab6Xxo9rId8HiyPXJ0A==}
@@ -359,6 +360,7 @@ packages:
   '@aws-sdk/middleware-flexible-checksums@3.732.0':
     resolution: {integrity: sha512-MIbF6cYWg5noRO1kRZNC0vewj6qzSYL/BGNlPxRQcqb6egUiGrhPEi8Y/qqweB7MlBHsqSO5YNPwH/Py8ToSVw==}
     engines: {node: '>=18.0.0'}
+    deprecated: Please upgrade to >=3.735.0, which contains fixes for checksum validation in S3 getObject calls. Details https://github.com/aws/aws-sdk-js-v3/issues/6827
 
   '@aws-sdk/middleware-host-header@3.731.0':
     resolution: {integrity: sha512-ndAJsm5uWPPJRZowLKpB1zuL17qWlWVtCJP4I/ynBkq1PU1DijDXBul2UZaG6Mpvsgms1NXo/h9noHuK7T3v8w==}
@@ -3195,8 +3197,8 @@ packages:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
     engines: {node: '>=18'}
 
-  globals@15.14.0:
-    resolution: {integrity: sha512-OkToC372DtlQeje9/zHIo5CT8lRP/FUgEOKBEhU4e0abL7J7CD24fD9ohiLN5hagG/kWCYj4K5oaxxtj2Z0Dig==}
+  globals@15.15.0:
+    resolution: {integrity: sha512-7ACyT3wmyp3I61S4fG682L0VA2RGD9otkqGJIwNUMF1SWUombIIk+af1unuDYgMm082aHYwD+mzJvv9Iu8dsgg==}
     engines: {node: '>=18'}
 
   globby@14.0.2:
@@ -9293,7 +9295,7 @@ snapshots:
 
   globals@14.0.0: {}
 
-  globals@15.14.0: {}
+  globals@15.15.0: {}
 
   globby@14.0.2:
     dependencies:

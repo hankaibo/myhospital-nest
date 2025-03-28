@@ -38,6 +38,7 @@ export class UsersService {
     }
 
     let email: string | null = null;
+
     if (createUserDto.email) {
       const userObject = await this.usersRepository.findByEmail(
         createUserDto.email,
@@ -54,6 +55,7 @@ export class UsersService {
     }
 
     let photo: FileType | null | undefined = undefined;
+
     if (createUserDto.photo?.id) {
       const fileObject = await this.filesService.findById(
         createUserDto.photo.id,
@@ -72,6 +74,7 @@ export class UsersService {
     }
 
     let role: Role | undefined = undefined;
+
     if (createUserDto.role?.id) {
       const roleObject = Object.values(RoleEnum)
         .map(String)
@@ -84,12 +87,14 @@ export class UsersService {
           },
         });
       }
+
       role = {
         id: createUserDto.role.id,
       };
     }
 
     let status: Status | undefined = undefined;
+
     if (createUserDto.status?.id) {
       const statusObject = Object.values(StatusEnum)
         .map(String)
@@ -102,6 +107,7 @@ export class UsersService {
           },
         });
       }
+
       status = {
         id: createUserDto.status.id,
       };
@@ -145,6 +151,7 @@ export class UsersService {
   findByIds(ids: User['id'][]): Promise<User[]> {
     return this.usersRepository.findByIds(ids);
   }
+
   findByEmail(email: User['email']): Promise<NullableType<User>> {
     return this.usersRepository.findByEmail(email);
   }
@@ -181,6 +188,7 @@ export class UsersService {
     }
 
     let email: string | null | undefined = undefined;
+
     if (updateUserDto.email) {
       const userObject = await this.usersRepository.findByEmail(
         updateUserDto.email,
@@ -194,12 +202,14 @@ export class UsersService {
           },
         });
       }
+
       email = updateUserDto.email;
     } else if (updateUserDto.email === null) {
       email = null;
     }
 
     let photo: FileType | null | undefined = undefined;
+
     if (updateUserDto.photo?.id) {
       const fileObject = await this.filesService.findById(
         updateUserDto.photo.id,
@@ -218,6 +228,7 @@ export class UsersService {
     }
 
     let role: Role | undefined = undefined;
+
     if (updateUserDto.role?.id) {
       const roleObject = Object.values(RoleEnum)
         .map(String)
@@ -230,6 +241,7 @@ export class UsersService {
           },
         });
       }
+
       role = {
         id: updateUserDto.role.id,
       };
@@ -249,6 +261,7 @@ export class UsersService {
           },
         });
       }
+
       status = {
         id: updateUserDto.status.id,
       };

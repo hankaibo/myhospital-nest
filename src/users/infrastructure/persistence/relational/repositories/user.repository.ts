@@ -64,10 +64,12 @@ export class UsersRelationalRepository implements UserRepository {
 
     return entity ? UserMapper.toDomain(entity) : null;
   }
+
   async findByIds(ids: User['id'][]): Promise<User[]> {
     const entities = await this.usersRepository.find({
       where: { id: In(ids) },
     });
+
     return entities.map((user) => UserMapper.toDomain(user));
   }
 

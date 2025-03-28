@@ -31,12 +31,14 @@ export class FileRelationalRepository implements FileRepository {
 
     return entity ? FileMapper.toDomain(entity) : null;
   }
+
   async findByIds(ids: FileType['id'][]): Promise<FileType[]> {
     const entities = await this.fileRepository.find({
       where: {
         id: In(ids),
       },
     });
+
     return entities.map((entity) => FileMapper.toDomain(entity));
   }
 }

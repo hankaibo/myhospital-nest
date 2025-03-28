@@ -105,8 +105,6 @@ export class UsersRelationalRepository implements UserRepository {
 }
 ```
 
-
-
 ---
 
 ## FAQ
@@ -114,9 +112,6 @@ export class UsersRelationalRepository implements UserRepository {
 ### Is there a way to generate a new resource (controller, service, DTOs, etc) with Hexagonal Architecture?
 
 Yes, you can use the [CLI](cli.md) to generate a new resource with Hexagonal Architecture.
-
-
-
 
 ---
 

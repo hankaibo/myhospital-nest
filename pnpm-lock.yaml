@@ -128,7 +128,7 @@ importers:
         version: 10.0.1(eslint@10.1.0(jiti@2.6.1))
       '@nestjs/cli':
         specifier: 11.0.16
-        version: 11.0.16(@swc/cli@0.8.0(@swc/core@1.15.21)(chokidar@4.0.3))(@swc/core@1.15.21)(@types/node@25.5.0)
+        version: 11.0.16(@swc/cli@0.7.10(@swc/core@1.15.21)(chokidar@4.0.3))(@swc/core@1.15.21)(@types/node@25.5.0)
       '@nestjs/schematics':
         specifier: 11.0.9
         version: 11.0.9(chokidar@4.0.3)(typescript@5.8.2)
@@ -139,8 +139,8 @@ importers:
         specifier: 10.0.6
         version: 10.0.6(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.3.0)(release-it@19.2.4(@types/node@25.5.0))
       '@swc/cli':
-        specifier: 0.8.0
-        version: 0.8.0(@swc/core@1.15.21)(chokidar@4.0.3)
+        specifier: 0.7.10
+        version: 0.7.10(@swc/core@1.15.21)(chokidar@4.0.3)
       '@swc/core':
         specifier: 1.15.21
         version: 1.15.21
@@ -1616,13 +1616,13 @@ packages:
   '@sqltools/formatter@1.2.5':
     resolution: {integrity: sha512-Uy0+khmZqUrUGm5dmMqVlnvufZRSK0FbYzVgp0UMstm+F5+W2/jnEEQyc9vo1ZR/E5ZI/B1WjjoTqBqwJL6Krw==}
 
-  '@swc/cli@0.8.0':
-    resolution: {integrity: sha512-vzUkYzlqLe9dC+B0ZIH62CzfSZOCTjIsmquYyyyi45JCm1xmRfLDKeEeMrEPPyTWnEEN84e4iVd49Tgqa+2GaA==}
-    engines: {node: '>= 20.19.0'}
+  '@swc/cli@0.7.10':
+    resolution: {integrity: sha512-QQ36Q1VwGTT2YzvMeNe/j1x4DKS277DscNhWc57dIwQn//C+zAgvuSupMB/XkmYqPKQX+8hjn5/cHRJrMvWy0Q==}
+    engines: {node: '>= 16.14.0'}
     hasBin: true
     peerDependencies:
       '@swc/core': ^1.2.66
-      chokidar: ^5.0.0
+      chokidar: ^4.0.1
     peerDependenciesMeta:
       chokidar:
         optional: true
@@ -6742,7 +6742,7 @@ snapshots:
       axios: 1.13.6
       rxjs: 7.8.2
 
-  '@nestjs/cli@11.0.16(@swc/cli@0.8.0(@swc/core@1.15.21)(chokidar@4.0.3))(@swc/core@1.15.21)(@types/node@25.5.0)':
+  '@nestjs/cli@11.0.16(@swc/cli@0.7.10(@swc/core@1.15.21)(chokidar@4.0.3))(@swc/core@1.15.21)(@types/node@25.5.0)':
     dependencies:
       '@angular-devkit/core': 19.2.19(chokidar@4.0.3)
       '@angular-devkit/schematics': 19.2.19(chokidar@4.0.3)
@@ -6763,7 +6763,7 @@ snapshots:
       webpack: 5.104.1(@swc/core@1.15.21)
       webpack-node-externals: 3.0.0
     optionalDependencies:
-      '@swc/cli': 0.8.0(@swc/core@1.15.21)(chokidar@4.0.3)
+      '@swc/cli': 0.7.10(@swc/core@1.15.21)(chokidar@4.0.3)
       '@swc/core': 1.15.21
     transitivePeerDependencies:
       - '@types/node'
@@ -7353,7 +7353,7 @@ snapshots:
 
   '@sqltools/formatter@1.2.5': {}
 
-  '@swc/cli@0.8.0(@swc/core@1.15.21)(chokidar@4.0.3)':
+  '@swc/cli@0.7.10(@swc/core@1.15.21)(chokidar@4.0.3)':
     dependencies:
       '@swc/core': 1.15.21
       '@swc/counter': 0.1.3

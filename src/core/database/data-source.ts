@@ -16,8 +16,8 @@ export const AppDataSource = new DataSource({
   keepConnectionAlive: true,
   logging: process.env.NODE_ENV !== 'production',
   entities: [
-    __dirname + '/../../../modules/**/*.entity{.ts,.js}',
-    __dirname + '/../../../shared/**/*.entity{.ts,.js}',
+    __dirname + '/../../modules/**/*.entity{.ts,.js}',
+    __dirname + '/../../shared/**/*.entity{.ts,.js}',
   ],
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
   cli: {

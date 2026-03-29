@@ -24,8 +24,8 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       logging:
         this.configService.get('app.nodeEnv', { infer: true }) !== 'production',
       entities: [
-        __dirname + '/../../../modules/**/*.entity{.ts,.js}',
-        __dirname + '/../../../shared/**/*.entity{.ts,.js}',
+        __dirname + '/../../modules/**/*.entity{.ts,.js}',
+        __dirname + '/../../shared/**/*.entity{.ts,.js}',
       ],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       cli: {

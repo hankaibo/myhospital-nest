@@ -110,14 +110,21 @@ export class HospitalRelationalRepository implements HospitalRepository {
 
     const entities = await this.hospitalRepository
       .createQueryBuilder('hospital')
-      .where(
-        `ST_DistanceSphere(hospital.lng_lat, ST_MakePoint(:longitude, :latitude)) <= :radius`,
-        {
-          longitude,
-          latitude,
-          radius,
-        },
+      .where('hospital.lng_lat IS NOT NULL')
+      .andWhere(
+        `
+        ST_DWithin(
+          hospital.lng_lat::geography,
+          ST_SetSRID(ST_MakePoint(:longitude,:latitude),4326)::geography,
+          :radius
+        )
+      `,
       )
+      .setParameters({
+        longitude,
+        latitude,
+        radius,
+      })
       .getMany();
 
     return entities.map((entity) => HospitalMapper.toDomain(entity));

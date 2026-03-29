@@ -56,8 +56,8 @@ export class HospitalsController {
     const latitude = query.latitude;
     let radius = query.radius;
 
-    if (radius > 1000) {
-      radius = 1000;
+    if (radius > 5000) {
+      radius = 5000;
     }
 
     return this.hospitalsService.findByCircle({

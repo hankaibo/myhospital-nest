@@ -23,13 +23,15 @@ export class AuthAppleController {
     private readonly authAppleService: AuthAppleService,
   ) {}
 
+  // #region
   @ApiOkResponse({
     type: LoginResponseDto,
   })
+  // #endregion
+  @Post('login')
   @SerializeOptions({
     groups: ['me'],
   })
-  @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: AuthAppleLoginDto): Promise<LoginResponseDto> {
     const socialData = await this.authAppleService.getProfileByToken(loginDto);

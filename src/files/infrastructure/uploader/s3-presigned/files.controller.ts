@@ -13,12 +13,14 @@ import { FileResponseDto } from './dto/file-response.dto';
 export class FilesS3PresignedController {
   constructor(private readonly filesService: FilesS3PresignedService) {}
 
+  // #region
   @ApiCreatedResponse({
     type: FileResponseDto,
   })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
+  // #endregion
   @Post('upload')
+  @UseGuards(AuthGuard('jwt'))
   async uploadFile(@Body() file: FileUploadDto) {
     return this.filesService.create(file);
   }

@@ -47,25 +47,29 @@ import { infinityPagination } from '../utils/infinity-pagination';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  // #region
   @ApiCreatedResponse({
     type: User,
   })
+  // #endregion
+  @Post()
   @SerializeOptions({
     groups: ['admin'],
   })
-  @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createProfileDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createProfileDto);
   }
 
+  // #region
   @ApiOkResponse({
     type: InfinityPaginationResponse(User),
   })
+  // #endregion
+  @Get()
   @SerializeOptions({
     groups: ['admin'],
   })
-  @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query() query: QueryUserDto,
@@ -89,36 +93,40 @@ export class UsersController {
     );
   }
 
-  @ApiOkResponse({
-    type: User,
-  })
-  @SerializeOptions({
-    groups: ['admin'],
-  })
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
+  // #region
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
   })
+  @ApiOkResponse({
+    type: User,
+  })
+  // #endregion
+  @Get(':id')
+  @SerializeOptions({
+    groups: ['admin'],
+  })
+  @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: User['id']): Promise<NullableType<User>> {
     return this.usersService.findById(id);
   }
 
-  @ApiOkResponse({
-    type: User,
-  })
-  @SerializeOptions({
-    groups: ['admin'],
-  })
-  @Patch(':id')
-  @HttpCode(HttpStatus.OK)
+  // #region
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
   })
+  @ApiOkResponse({
+    type: User,
+  })
+  // #endregion
+  @Patch(':id')
+  @SerializeOptions({
+    groups: ['admin'],
+  })
+  @HttpCode(HttpStatus.OK)
   update(
     @Param('id') id: User['id'],
     @Body() updateProfileDto: UpdateUserDto,
@@ -126,12 +134,14 @@ export class UsersController {
     return this.usersService.update(id, updateProfileDto);
   }
 
-  @Delete(':id')
+  // #region
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
   })
+  // #endregion
+  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: User['id']): Promise<void> {
     return this.usersService.remove(id);

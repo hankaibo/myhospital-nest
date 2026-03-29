@@ -33,12 +33,14 @@ import { RefreshResponseDto } from './dto/refresh-response.dto';
 export class AuthController {
   constructor(private readonly service: AuthService) {}
 
-  @SerializeOptions({
-    groups: ['me'],
-  })
-  @Post('email/login')
+  // #region
   @ApiOkResponse({
     type: LoginResponseDto,
+  })
+  // #endregion
+  @Post('email/login')
+  @SerializeOptions({
+    groups: ['me'],
   })
   @HttpCode(HttpStatus.OK)
   public login(@Body() loginDto: AuthEmailLoginDto): Promise<LoginResponseDto> {
@@ -84,28 +86,32 @@ export class AuthController {
     );
   }
 
-  @ApiBearerAuth()
-  @SerializeOptions({
-    groups: ['me'],
-  })
-  @Get('me')
-  @UseGuards(AuthGuard('jwt'))
+  // #region
   @ApiOkResponse({
     type: User,
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Get('me')
+  @SerializeOptions({
+    groups: ['me'],
+  })
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   public me(@Request() request): Promise<NullableType<User>> {
     return this.service.me(request.user);
   }
 
-  @ApiBearerAuth()
+  // #region
   @ApiOkResponse({
     type: RefreshResponseDto,
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Post('refresh')
   @SerializeOptions({
     groups: ['me'],
   })
-  @Post('refresh')
   @UseGuards(AuthGuard('jwt-refresh'))
   @HttpCode(HttpStatus.OK)
   public refresh(@Request() request): Promise<RefreshResponseDto> {
@@ -115,7 +121,9 @@ export class AuthController {
     });
   }
 
+  // #region
   @ApiBearerAuth()
+  // #endregion
   @Post('logout')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -125,16 +133,18 @@ export class AuthController {
     });
   }
 
-  @ApiBearerAuth()
-  @SerializeOptions({
-    groups: ['me'],
-  })
-  @Patch('me')
-  @UseGuards(AuthGuard('jwt'))
-  @HttpCode(HttpStatus.OK)
+  // #region
   @ApiOkResponse({
     type: User,
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Patch('me')
+  @SerializeOptions({
+    groups: ['me'],
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
   public update(
     @Request() request,
     @Body() userDto: AuthUpdateDto,
@@ -142,7 +152,9 @@ export class AuthController {
     return this.service.update(request.user, userDto);
   }
 
+  // #region
   @ApiBearerAuth()
+  // #endregion
   @Delete('me')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)

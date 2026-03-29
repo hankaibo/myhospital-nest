@@ -29,12 +29,11 @@ import { FileResponseDto } from './dto/file-response.dto';
 export class FilesLocalController {
   constructor(private readonly filesService: FilesLocalService) {}
 
+  // #region
   @ApiCreatedResponse({
     type: FileResponseDto,
   })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  @Post('upload')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -47,6 +46,9 @@ export class FilesLocalController {
       },
     },
   })
+  // #endregion
+  @Post('upload')
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
@@ -54,8 +56,10 @@ export class FilesLocalController {
     return this.filesService.create(file);
   }
 
-  @Get(':path')
+  // #region
   @ApiExcludeEndpoint()
+  // #endregion
+  @Get(':path')
   download(@Param('path') path, @Response() response) {
     return response.sendFile(path, { root: './files' });
   }

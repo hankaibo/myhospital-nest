@@ -25,12 +25,11 @@ import { FileResponseDto } from './dto/file-response.dto';
 export class FilesS3Controller {
   constructor(private readonly filesService: FilesS3Service) {}
 
+  // #region
   @ApiCreatedResponse({
     type: FileResponseDto,
   })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  @Post('upload')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -43,6 +42,9 @@ export class FilesS3Controller {
       },
     },
   })
+  // #endregion
+  @Post('upload')
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile() file: Express.MulterS3.File,

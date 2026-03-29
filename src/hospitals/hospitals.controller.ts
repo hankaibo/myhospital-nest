@@ -69,24 +69,28 @@ export class HospitalsController {
     });
   }
 
-  @ApiBearerAuth()
-  @Post()
+  // #region
   @ApiCreatedResponse({
     type: Hospital,
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Post()
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   create(@Body() createHospitalDto: CreateHospitalDto) {
     return this.hospitalsService.create(createHospitalDto);
   }
 
-  @ApiBearerAuth()
+  // #region
   @ApiOkResponse({
     type: PaginationResponse(Hospital),
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Get('pagination')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Get('pagination')
   @HttpCode(HttpStatus.OK)
   async find(
     @Query() query: QueryHospitalsDto,
@@ -105,11 +109,13 @@ export class HospitalsController {
     return pagination(data, { page, limit }, total);
   }
 
-  @ApiBearerAuth()
-  @Get()
+  // #region
   @ApiOkResponse({
     type: InfinityPaginationResponse(Hospital),
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Get()
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @HttpCode(HttpStatus.OK)
@@ -133,8 +139,7 @@ export class HospitalsController {
     );
   }
 
-  @ApiBearerAuth()
-  @Get(':id')
+  // #region
   @ApiParam({
     name: 'id',
     type: String,
@@ -143,14 +148,16 @@ export class HospitalsController {
   @ApiOkResponse({
     type: Hospital,
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Get(':id')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   findById(@Param('id') id: string) {
     return this.hospitalsService.findById(id);
   }
 
-  @ApiBearerAuth()
-  @Patch(':id')
+  // #region
   @ApiParam({
     name: 'id',
     type: String,
@@ -159,6 +166,9 @@ export class HospitalsController {
   @ApiOkResponse({
     type: Hospital,
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Patch(':id')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   update(
@@ -168,46 +178,54 @@ export class HospitalsController {
     return this.hospitalsService.update(id, updateHospitalDto);
   }
 
-  @ApiBearerAuth()
-  @Delete(':id')
+  // #region
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Delete(':id')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   remove(@Param('id') id: string) {
     return this.hospitalsService.remove(id);
   }
 
-  @ApiBearerAuth()
+  // #region
   @ApiCreatedResponse({
     type: Hospital,
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Post(':id/copy')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Post(':id/copy')
   @HttpCode(HttpStatus.CREATED)
   copy(@Param('id') id: Hospital['id']): Promise<Hospital> {
     return this.hospitalsService.copy(id);
   }
 
+  // #region
   @ApiBearerAuth()
+  // #endregion
+  @Post('copy')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Post('copy')
   copyAll(): Promise<void> {
     return this.hospitalsService.copyAll('；');
   }
 
-  @ApiBearerAuth()
+  // #region
   @ApiCreatedResponse({
     type: Hospital,
   })
+  @ApiBearerAuth()
+  // #endregion
+  @Get('sync/:name')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Get('sync/:name')
   @HttpCode(HttpStatus.OK)
   sync(@Param('name') name: string): Promise<void> {
     return this.hospitalsService.sync(name);

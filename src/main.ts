@@ -9,9 +9,9 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
-import validationOptions from './utils/validation-options';
-import { AllConfigType } from './config/config.type';
-import { ResolvePromisesInterceptor } from './utils/serializer.interceptor';
+import validationOptions from './shared/utils/validation-options';
+import { AllConfigType } from './core/config/config.type';
+import { ResolvePromisesInterceptor } from './shared/utils/serializer.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });

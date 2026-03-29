@@ -1,27 +1,27 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
-import { FilesModule } from './files/files.module';
-import { AuthModule } from './auth/auth.module';
-import databaseConfig from './database/config/database.config';
-import authConfig from './auth/config/auth.config';
-import appConfig from './config/app.config';
-import mailConfig from './mail/config/mail.config';
-import fileConfig from './files/config/file.config';
-import appleConfig from './auth-apple/config/apple.config';
-import amapConfig from './amap/config/amap.config';
+import { UsersModule } from './modules/users/users.module';
+import { FilesModule } from './modules/files/files.module';
+import { AuthModule } from './modules/auth/auth.module';
+import databaseConfig from './core/database/config/database.config';
+import authConfig from './modules/auth/config/auth.config';
+import appConfig from './core/config/app.config';
+import mailConfig from './core/mail/config/mail.config';
+import fileConfig from './modules/files/config/file.config';
+import appleConfig from './modules/auth-apple/config/apple.config';
+import amapConfig from './modules/amap/config/amap.config';
 import path from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthAppleModule } from './auth-apple/auth-apple.module';
+import { AuthAppleModule } from './modules/auth-apple/auth-apple.module';
 import { HeaderResolver, I18nModule } from 'nestjs-i18n';
-import { TypeOrmConfigService } from './database/typeorm-config.service';
-import { MailModule } from './mail/mail.module';
-import { HomeModule } from './home/home.module';
+import { TypeOrmConfigService } from './core/database/typeorm-config.service';
+import { MailModule } from './core/mail/mail.module';
+import { HomeModule } from './modules/home/home.module';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { AllConfigType } from './config/config.type';
-import { SessionModule } from './session/session.module';
-import { MailerModule } from './mailer/mailer.module';
-import { HospitalsModule } from './hospitals/hospitals.module';
+import { AllConfigType } from './core/config/config.type';
+import { SessionModule } from './shared/session/session.module';
+import { MailerModule } from './core/mailer/mailer.module';
+import { HospitalsModule } from './modules/hospitals/hospitals.module';
 
 const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
   useClass: TypeOrmConfigService,
@@ -51,7 +51,10 @@ const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
         fallbackLanguage: configService.getOrThrow('app.fallbackLanguage', {
           infer: true,
         }),
-        loaderOptions: { path: path.join(__dirname, '/i18n/'), watch: true },
+        loaderOptions: {
+          path: path.join(__dirname, '/core/i18n/'),
+          watch: true,
+        },
       }),
       resolvers: [
         {

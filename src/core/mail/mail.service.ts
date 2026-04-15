@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { I18nContext } from 'nestjs-i18n';
 import { MailData } from './interfaces/mail-data.interface';
-
-import { MaybeType } from '../../shared/utils/types/maybe.type';
 import { MailerService } from '../mailer/mailer.service';
 import path from 'path';
 import { AllConfigType } from '../config/config.type';
@@ -16,20 +13,10 @@ export class MailService {
   ) {}
 
   async userSignUp(mailData: MailData<{ hash: string }>): Promise<void> {
-    const i18n = I18nContext.current();
-    let emailConfirmTitle: MaybeType<string>;
-    let text1: MaybeType<string>;
-    let text2: MaybeType<string>;
-    let text3: MaybeType<string>;
-
-    if (i18n) {
-      [emailConfirmTitle, text1, text2, text3] = await Promise.all([
-        i18n.t('common.confirmEmail'),
-        i18n.t('confirm-email.text1'),
-        i18n.t('confirm-email.text2'),
-        i18n.t('confirm-email.text3'),
-      ]);
-    }
+    const emailConfirmTitle = '确认电子邮件';
+    const text1 = '嗨！';
+    const text2 = '您即将开始使用';
+    const text3 = '只需点击下方的绿色按钮来验证您的电子邮件地址。';
 
     const url = new URL(
       this.configService.getOrThrow('app.frontendDomain', {
@@ -66,22 +53,11 @@ export class MailService {
   async forgotPassword(
     mailData: MailData<{ hash: string; tokenExpires: number }>,
   ): Promise<void> {
-    const i18n = I18nContext.current();
-    let resetPasswordTitle: MaybeType<string>;
-    let text1: MaybeType<string>;
-    let text2: MaybeType<string>;
-    let text3: MaybeType<string>;
-    let text4: MaybeType<string>;
-
-    if (i18n) {
-      [resetPasswordTitle, text1, text2, text3, text4] = await Promise.all([
-        i18n.t('common.resetPassword'),
-        i18n.t('reset-password.text1'),
-        i18n.t('reset-password.text2'),
-        i18n.t('reset-password.text3'),
-        i18n.t('reset-password.text4'),
-      ]);
-    }
+    const resetPasswordTitle = '重置密码';
+    const text1 = '登录遇到问题？';
+    const text2 = '重置密码很简单。';
+    const text3 = '只需点击下方按钮并按照说明操作。我们很快就能帮您搞定。';
+    const text4 = '如果您没有发出此请求，请忽略此电子邮件。';
 
     const url = new URL(
       this.configService.getOrThrow('app.frontendDomain', {
@@ -120,20 +96,10 @@ export class MailService {
   }
 
   async confirmNewEmail(mailData: MailData<{ hash: string }>): Promise<void> {
-    const i18n = I18nContext.current();
-    let emailConfirmTitle: MaybeType<string>;
-    let text1: MaybeType<string>;
-    let text2: MaybeType<string>;
-    let text3: MaybeType<string>;
-
-    if (i18n) {
-      [emailConfirmTitle, text1, text2, text3] = await Promise.all([
-        i18n.t('common.confirmEmail'),
-        i18n.t('confirm-new-email.text1'),
-        i18n.t('confirm-new-email.text2'),
-        i18n.t('confirm-new-email.text3'),
-      ]);
-    }
+    const emailConfirmTitle = '确认电子邮件';
+    const text1 = '嗨！';
+    const text2 = '确认您的新电子邮件地址。';
+    const text3 = '只需点击下方的绿色按钮来验证您的电子邮件地址。';
 
     const url = new URL(
       this.configService.getOrThrow('app.frontendDomain', {

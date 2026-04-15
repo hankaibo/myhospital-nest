@@ -3,6 +3,6 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "assets": [{ "include": "core/i18n/**/*", "watchAssets": true }]
+    "assets": []
   }
 }

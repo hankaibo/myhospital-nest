@@ -9,12 +9,15 @@ import {
   FilterHospitalDto,
 } from './dto/find-all-hospitals.dto';
 import { Hospital } from './domain/hospital';
+import { HospitalStagingSyncService } from './services/hospital-staging-sync.service';
+import { SyncStagingHospitalsDto } from './dto/sync-staging-hospitals.dto';
 
 @Injectable()
 export class HospitalsService {
   constructor(
     // Dependencies here
     private readonly hospitalRepository: HospitalRepository,
+    private readonly hospitalStagingSyncService: HospitalStagingSyncService,
   ) {}
 
   async create(createHospitalDto: CreateHospitalDto) {
@@ -24,18 +27,30 @@ export class HospitalsService {
     return this.hospitalRepository.create({
       // Do not remove comment below.
       // <creating-property-payload />
-      city: createHospitalDto.city,
-
+      institutionCode: createHospitalDto.institutionCode,
+      city: createHospitalDto.city ?? null,
       name: createHospitalDto.name,
-      code: createHospitalDto.code,
-      district: createHospitalDto.district,
-      type: createHospitalDto.type,
-      lvl: createHospitalDto.lvl,
-      address: createHospitalDto.address,
-      zipCode: createHospitalDto.zipCode,
-      introduction: createHospitalDto.introduction,
-      lat: createHospitalDto.lat,
-      lng: createHospitalDto.lng,
+      typeCode: createHospitalDto.typeCode ?? null,
+      typeName: createHospitalDto.typeName ?? null,
+      levelCode: createHospitalDto.levelCode ?? null,
+      levelName: createHospitalDto.levelName ?? null,
+      hospitalGradeCode: createHospitalDto.hospitalGradeCode ?? null,
+      regionCode: createHospitalDto.regionCode ?? null,
+      district: createHospitalDto.district ?? null,
+      address: createHospitalDto.address ?? null,
+      socialCreditCode: createHospitalDto.socialCreditCode ?? null,
+      nature: createHospitalDto.nature ?? null,
+      electronicInsuranceEnabled:
+        createHospitalDto.electronicInsuranceEnabled ?? null,
+      businessCapabilityLevels:
+        createHospitalDto.businessCapabilityLevels ?? null,
+      zipCode: createHospitalDto.zipCode ?? null,
+      introduction: createHospitalDto.introduction ?? null,
+      lat: createHospitalDto.lat ?? null,
+      lng: createHospitalDto.lng ?? null,
+      sourceMethod: createHospitalDto.sourceMethod ?? 'api',
+      rawPayload: createHospitalDto.rawPayload ?? null,
+      addressValid: createHospitalDto.addressValid ?? true,
     });
   }
 
@@ -97,18 +112,28 @@ export class HospitalsService {
     return this.hospitalRepository.update(id, {
       // Do not remove comment below.
       // <updating-property-payload />
+      institutionCode: updateHospitalDto.institutionCode,
       city: updateHospitalDto.city,
-
       name: updateHospitalDto.name,
-      code: updateHospitalDto.code,
+      typeCode: updateHospitalDto.typeCode,
+      typeName: updateHospitalDto.typeName,
+      levelCode: updateHospitalDto.levelCode,
+      levelName: updateHospitalDto.levelName,
+      hospitalGradeCode: updateHospitalDto.hospitalGradeCode,
+      regionCode: updateHospitalDto.regionCode,
       district: updateHospitalDto.district,
-      type: updateHospitalDto.type,
-      lvl: updateHospitalDto.lvl,
       address: updateHospitalDto.address,
+      socialCreditCode: updateHospitalDto.socialCreditCode,
+      nature: updateHospitalDto.nature,
+      electronicInsuranceEnabled: updateHospitalDto.electronicInsuranceEnabled,
+      businessCapabilityLevels: updateHospitalDto.businessCapabilityLevels,
       zipCode: updateHospitalDto.zipCode,
       introduction: updateHospitalDto.introduction,
       lat: updateHospitalDto.lat,
       lng: updateHospitalDto.lng,
+      sourceMethod: updateHospitalDto.sourceMethod ?? undefined,
+      rawPayload: updateHospitalDto.rawPayload,
+      addressValid: updateHospitalDto.addressValid ?? undefined,
     });
   }
 
@@ -124,7 +149,7 @@ export class HospitalsService {
     return this.hospitalRepository.copyAll(separator);
   }
 
-  async sync(name: string) {
-    return await this.hospitalRepository.sync(name);
+  async syncStaging(syncDto: SyncStagingHospitalsDto) {
+    return await this.hospitalStagingSyncService.sync(syncDto);
   }
 }

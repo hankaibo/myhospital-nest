@@ -1,50 +1,124 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateHospitalDto {
-  @ApiProperty({
-    required: false,
-    type: () => String,
-  })
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  institutionCode: string;
+
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   city?: string | null;
 
   @ApiProperty({ type: String })
   @IsNotEmpty()
-  name: string | null;
+  @IsString()
+  name: string;
 
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  code: string | null;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  typeCode?: string | null;
 
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  district: string | null;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  typeName?: string | null;
 
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  type: string | null;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  levelCode?: string | null;
 
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  lvl: string | null;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  levelName?: string | null;
 
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  address: string | null;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  hospitalGradeCode?: string | null;
 
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  zipCode: string | null;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  address?: string | null;
 
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  introduction: string | null;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  regionCode?: string | null;
 
-  @ApiProperty({ type: Number })
-  lng: number | null;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  district?: string | null;
 
-  @ApiProperty({ type: Number })
-  lat: number | null;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  lng?: number | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  lat?: number | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  socialCreditCode?: string | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  nature?: string | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  electronicInsuranceEnabled?: boolean | null;
+
+  @ApiPropertyOptional({ type: Object })
+  @IsOptional()
+  @IsObject()
+  businessCapabilityLevels?: Record<string, any> | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  zipCode?: string | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  introduction?: string | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  sourceMethod?: string | null;
+
+  @ApiPropertyOptional({ type: Object })
+  @IsOptional()
+  @IsObject()
+  rawPayload?: Record<string, any> | null;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  addressValid?: boolean | null;
 }

@@ -40,6 +40,7 @@ import {
   QueryHospitalsDto,
   FilterHospitalDto,
 } from './dto/find-all-hospitals.dto';
+import { SyncStagingHospitalsDto } from './dto/sync-staging-hospitals.dto';
 
 @ApiTags('Hospitals')
 @Controller({
@@ -218,16 +219,23 @@ export class HospitalsController {
   }
 
   // #region
-  @ApiCreatedResponse({
-    type: Hospital,
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        selected: { type: 'number' },
+        synced: { type: 'number' },
+        failed: { type: 'number' },
+      },
+    },
   })
   @ApiBearerAuth()
   // #endregion
-  @Get('sync/:name')
+  @Post('sync/staging')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @HttpCode(HttpStatus.OK)
-  sync(@Param('name') name: string): Promise<void> {
-    return this.hospitalsService.sync(name);
+  syncStaging(@Query() query: SyncStagingHospitalsDto) {
+    return this.hospitalsService.syncStaging(query);
   }
 }

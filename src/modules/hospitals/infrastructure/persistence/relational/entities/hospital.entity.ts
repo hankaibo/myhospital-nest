@@ -1,56 +1,132 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Point } from 'geojson';
 import { EntityRelationalHelper } from '../../../../../../shared/utils/relational-entity-helper';
 
-@Entity({
-  name: 'hospital',
-})
+@Entity({ name: 'hospital' })
+@Index(
+  'uq_hospital_institution_code_address_key',
+  ['institutionCode', 'addressKey'],
+  {
+    unique: true,
+  },
+)
 export class HospitalEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ name: 'institution_code', type: 'varchar', length: 30 })
+  institutionCode: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  name: string;
+
+  @Column({ name: 'type_code', type: 'varchar', length: 20, nullable: true })
+  typeCode: string | null;
+
+  @Column({ name: 'type_name', type: 'varchar', length: 100, nullable: true })
+  typeName: string | null;
+
+  @Column({ name: 'level_code', type: 'varchar', length: 10, nullable: true })
+  levelCode: string | null;
+
+  @Column({ name: 'level_name', type: 'varchar', length: 50, nullable: true })
+  levelName: string | null;
+
   @Column({
+    name: 'hospital_grade_code',
+    type: 'varchar',
+    length: 10,
     nullable: true,
-    type: String,
   })
-  city?: string | null;
+  hospitalGradeCode: string | null;
 
-  @Column({ type: String, nullable: true })
-  name: string | null;
-
-  @Column({ type: String, nullable: true })
-  code: string | null;
-
-  @Column({ type: String, nullable: true })
-  district: string | null;
-
-  @Column({ type: String, nullable: true })
-  type: string | null;
-
-  @Column({ type: String, nullable: true })
-  lvl: string | null;
-
-  @Column({ type: String, nullable: true })
+  @Column({ type: 'text', nullable: true })
   address: string | null;
 
-  @Column({ name: 'zip_code', type: String, nullable: true })
+  @Column({ name: 'region_code', type: 'varchar', length: 20, nullable: true })
+  regionCode: string | null;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  city: string | null;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  district: string | null;
+
+  @Column({ type: 'numeric', precision: 12, scale: 8, nullable: true })
+  lat: string | null;
+
+  @Column({ type: 'numeric', precision: 12, scale: 8, nullable: true })
+  lng: string | null;
+
+  @Column({
+    name: 'lng_lat',
+    type: 'geography',
+    spatialFeatureType: 'Point',
+    srid: 4326,
+    nullable: true,
+  })
+  lngLat: Point | null;
+
+  @Column({
+    name: 'social_credit_code',
+    type: 'varchar',
+    length: 30,
+    nullable: true,
+  })
+  socialCreditCode: string | null;
+
+  @Column({ type: 'varchar', length: 10, nullable: true })
+  nature: string | null;
+
+  @Column({
+    name: 'electronic_insurance_enabled',
+    type: 'boolean',
+    nullable: true,
+  })
+  electronicInsuranceEnabled: boolean | null;
+
+  @Column({ name: 'business_capability_levels', type: 'jsonb', nullable: true })
+  businessCapabilityLevels: Record<string, unknown> | null;
+
+  @Column({ name: 'zip_code', type: 'varchar', length: 10, nullable: true })
   zipCode: string | null;
 
-  @Column({ type: String, nullable: true })
+  @Column({ type: 'text', nullable: true })
   introduction: string | null;
 
-  @Column({ type: 'geometry', name: 'lng_lat', nullable: true })
-  lngLat: Point;
+  @Column({
+    name: 'source_method',
+    type: 'varchar',
+    length: 20,
+    default: 'api',
+  })
+  sourceMethod: string;
 
-  @CreateDateColumn()
+  @Column({ name: 'raw_payload', type: 'jsonb', nullable: true })
+  rawPayload: Record<string, unknown> | null;
+
+  @Column({ name: 'address_valid', type: 'boolean', default: true })
+  addressValid: boolean;
+
+  @Column({
+    name: 'address_key',
+    type: 'text',
+    insert: false,
+    update: false,
+    select: false,
+  })
+  addressKey: string;
+
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

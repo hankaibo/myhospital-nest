@@ -1,4 +1,3 @@
-import { DeepPartial } from '../../../../shared/utils/types/deep-partial.type';
 import { NullableType } from '../../../../shared/utils/types/nullable.type';
 import { IPaginationOptions } from '../../../../shared/utils/types/pagination-options';
 import { ICircleOptions } from '../../../../shared/utils/types/circle-options';
@@ -41,14 +40,12 @@ export abstract class HospitalRepository {
 
   abstract update(
     id: Hospital['id'],
-    payload: DeepPartial<Hospital>,
-  ): Promise<Hospital | null>;
+    payload: Partial<Hospital>,
+  ): Promise<Hospital>;
 
   abstract remove(id: Hospital['id']): Promise<void>;
 
   abstract copy(id: Hospital['id']): Promise<Hospital>;
 
   abstract copyAll(separator: string): Promise<void>;
-
-  abstract sync(name: string): Promise<void>;
 }

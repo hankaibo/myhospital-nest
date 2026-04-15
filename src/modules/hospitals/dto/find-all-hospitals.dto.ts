@@ -36,7 +36,7 @@ export class FilterHospitalDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  code?: string;
+  institutionCode?: string;
 
   @ApiPropertyOptional()
   @IsString()
@@ -46,12 +46,12 @@ export class FilterHospitalDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  type?: string;
+  typeCode?: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  lvl?: string;
+  levelCode?: string;
 }
 
 export class SortHospitalDto {

@@ -1,5 +1,5 @@
 ---
-to: src/database/seeds/relational/<%= h.inflection.transform(name, ['underscore', 'dasherize']) %>/<%= h.inflection.transform(name, ['underscore', 'dasherize']) %>-seed.module.ts
+to: src/core/database/seeds/relational/<%= h.inflection.transform(name, ['underscore', 'dasherize']) %>/<%= h.inflection.transform(name, ['underscore', 'dasherize']) %>-seed.module.ts
 ---
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';

@@ -1,2 +1,5 @@
-npm run lint
+# 只对暂存区的文件运行 ESLint
+npm run lint:staged
+
+# 运行测试
 npm run test -- --passWithNoTests

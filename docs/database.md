@@ -1,48 +1,48 @@
-# Database
+# 数据库
 
-## Table of Contents <!-- omit in toc -->
+## 目录 <!-- omit in toc -->
 
-- [About databases](#about-databases)
-- [Working with database schema (TypeORM)](#working-with-database-schema-typeorm)
-  - [Generate migration](#generate-migration)
-  - [Run migration](#run-migration)
-  - [Revert migration](#revert-migration)
-  - [Drop all tables in database](#drop-all-tables-in-database)
-- [Working with database schema (Mongoose)](#working-with-database-schema-mongoose)
-  - [Create schema](#create-schema)
-- [Seeding (TypeORM)](#seeding-typeorm)
-  - [Creating seeds (TypeORM)](#creating-seeds-typeorm)
-  - [Run seed (TypeORM)](#run-seed-typeorm)
-  - [Factory and Faker (TypeORM)](#factory-and-faker-typeorm)
-- [Seeding (Mongoose)](#seeding-mongoose)
-  - [Creating seeds (Mongoose)](#creating-seeds-mongoose)
-  - [Run seed (Mongoose)](#run-seed-mongoose)
-- [Performance optimization (PostgreSQL + TypeORM)](#performance-optimization-postgresql--typeorm)
-  - [Indexes and Foreign Keys](#indexes-and-foreign-keys)
-  - [Max connections](#max-connections)
-- [Performance optimization (MongoDB + Mongoose)](#performance-optimization-mongodb--mongoose)
-  - [Design schema](#design-schema)
-- [Switch PostgreSQL to MySQL](#switch-postgresql-to-mysql)
+- [关于数据库](#about-databases)
+- [使用数据库模式 (TypeORM)](#working-with-database-schema-typeorm)
+  - [生成迁移](#generate-migration)
+  - [运行迁移](#run-migration)
+  - [撤销迁移](#revert-migration)
+  - [删除数据库中的所有表](#drop-all-tables-in-database)
+- [使用数据库模式 (Mongoose)](#working-with-database-schema-mongoose)
+  - [创建模式](#create-schema)
+- [数据填充 (TypeORM)](#seeding-typeorm)
+  - [创建 Seeds (TypeORM)](#creating-seeds-typeorm)
+  - [运行 Seed (TypeORM)](#run-seed-typeorm)
+  - [工厂和 Faker (TypeORM)](#factory-and-faker-typeorm)
+- [数据填充 (Mongoose)](#seeding-mongoose)
+  - [创建 Seeds (Mongoose)](#creating-seeds-mongoose)
+  - [运行 Seed (Mongoose)](#run-seed-mongoose)
+- [性能优化 (PostgreSQL + TypeORM)](#performance-optimization-postgresql--typeorm)
+  - [索引和外键](#indexes-and-foreign-keys)
+  - [最大连接数](#max-connections)
+- [性能优化 (MongoDB + Mongoose)](#performance-optimization-mongodb--mongoose)
+  - [设计模式](#design-schema)
+- [将 PostgreSQL 切换为 MySQL](#switch-postgresql-to-mysql)
 
 ---
 
-## About databases
+## 关于数据库
 
-Boilerplate supports two types of databases: PostgreSQL with TypeORM and MongoDB with Mongoose. You can choose one of them or use both in your project. The choice of database depends on the requirements of your project.
+样板代码支持两种类型的数据库：PostgreSQL (TypeORM) 和 MongoDB (Mongoose)。您可以选择其中一种，也可以在项目中同时使用两者。数据库的选择取决于您的项目需求。
 
-For support of both databases used [Hexagonal Architecture](architecture.md#hexagonal-architecture).
+为了支持同时使用这两种数据库，我们使用了 [六边形架构](architecture.md#hexagonal-architecture)。
 
-## Working with database schema (TypeORM)
+## 使用数据库模式 (TypeORM)
 
-### Generate migration
+### 生成迁移
 
-1. Create entity file with extension `.entity.ts`. For example `post.entity.ts`:
+1. 创建扩展名为 `.entity.ts` 的实体文件。例如 `post.entity.ts`：
 
    ```ts
    // /src/posts/infrastructure/persistence/relational/entities/post.entity.ts
 
    import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-   import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
+   import { EntityRelationalHelper } from '@shared/relational-entity-helper';
 
    @Entity()
    export class Post extends EntityRelationalHelper {
@@ -55,31 +55,31 @@ For support of both databases used [Hexagonal Architecture](architecture.md#hexa
      @Column()
      body: string;
 
-     // Here any fields that you need
+     // 在这里添加您需要的任何字段
    }
    ```
 
-1. Next, generate migration file:
+1. 接下来，生成迁移文件：
 
    ```bash
-   npm run migration:generate -- src/database/migrations/CreatePostTable
+   npm run migration:generate -- src/core/database/migrations/CreatePostTable
    ```
 
-1. Apply this migration to database via [npm run migration:run](#run-migration).
+1. 通过 [npm run migration:run](#run-migration) 将此迁移应用到数据库。
 
-### Run migration
+### 运行迁移
 
 ```bash
 npm run migration:run
 ```
 
-### Revert migration
+### 撤销迁移
 
 ```bash
 npm run migration:revert
 ```
 
-### Drop all tables in database
+### 删除数据库中的所有表
 
 ```bash
 npm run schema:drop
@@ -87,11 +87,11 @@ npm run schema:drop
 
 ---
 
-## Working with database schema (Mongoose)
+## 使用数据库模式 (Mongoose)
 
-### Create schema
+### 创建模式
 
-1. Create entity file with extension `.schema.ts`. For example `post.schema.ts`:
+1. 创建扩展名为 `.schema.ts` 的实体文件。例如 `post.schema.ts`：
 
    ```ts
    // /src/posts/infrastructure/persistence/document/entities/post.schema.ts
@@ -115,7 +115,7 @@ npm run schema:drop
      @Prop()
      body: string;
 
-     // Here any fields that you need
+     // 在这里添加您需要的任何字段
    }
 
    export const PostSchema = SchemaFactory.createForClass(PostSchemaClass);
@@ -123,39 +123,39 @@ npm run schema:drop
 
 ---
 
-## Seeding (TypeORM)
+## 数据填充 (TypeORM)
 
-### Creating seeds (TypeORM)
+### 创建 Seeds (TypeORM)
 
-1. Create seed file with `npm run seed:create:relational -- --name Post`. Where `Post` is name of entity.
-1. Go to `src/database/seeds/relational/post/post-seed.service.ts`.
-1. In `run` method extend your logic.
-1. Run [npm run seed:run:relational](#run-seed-typeorm)
+1. 使用 `npm run seed:create:relational -- --name Post` 创建 seed 文件。其中 `Post` 是实体名称。
+1. 转到 `src/core/database/seeds/relational/post/post-seed.service.ts`。
+1. 在 `run` 方法中扩展您的逻辑。
+1. 运行 [npm run seed:run:relational](#run-seed-typeorm)
 
-### Run seed (TypeORM)
+### 运行 Seed (TypeORM)
 
 ```bash
 npm run seed:run:relational
 ```
 
-### Factory and Faker (TypeORM)
+### 工厂和 Faker (TypeORM)
 
-1. Install faker:
+1. 安装 faker：
 
     ```bash
     npm i --save-dev @faker-js/faker
     ```
 
-1. Create `src/database/seeds/relational/user/user.factory.ts`:
+1. 创建 `src/core/database/seeds/relational/user/user.factory.ts`：
 
     ```ts
     import { faker } from '@faker-js/faker';
-    import { RoleEnum } from '../../../../roles/roles.enum';
+    import { RoleEnum } from '@modules/roles/roles.enum';
     import { StatusEnum } from '../../../../statuses/statuses.enum';
     import { Injectable } from '@nestjs/common';
     import { InjectRepository } from '@nestjs/typeorm';
     import { Repository } from 'typeorm';
-    import { RoleEntity } from '../../../../roles/infrastructure/persistence/relational/entities/role.entity';
+    import { RoleEntity } from '@modules/roles/infrastructure/persistence/relational/entities/role.entity';
     import { UserEntity } from '../../../../users/infrastructure/persistence/relational/entities/user.entity';
     import { StatusEntity } from '../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
 
@@ -171,7 +171,7 @@ npm run seed:run:relational
       ) {}
 
       createRandomUser() {
-        // Need for saving "this" context
+        // 需要用于保存 "this" 上下文
         return () => {
           return this.repositoryUser.create({
             firstName: faker.person.firstName(),
@@ -192,22 +192,22 @@ npm run seed:run:relational
     }
     ```
 
-1. Make changes in `src/database/seeds/relational/user/user-seed.service.ts`:
+1. 在 `src/core/database/seeds/relational/user/user-seed.service.ts` 中进行更改：
 
     ```ts
-    // Some code here...
+    // 一些代码...
     import { UserFactory } from './user.factory';
     import { faker } from '@faker-js/faker';
 
     @Injectable()
     export class UserSeedService {
       constructor(
-        // Some code here...
+        // 一些代码...
         private userFactory: UserFactory,
       ) {}
 
       async run() {
-        // Some code here...
+        // 一些代码...
 
         await this.repository.save(
           faker.helpers.multiple(this.userFactory.createRandomUser(), {
@@ -218,7 +218,7 @@ npm run seed:run:relational
     }
     ```
 
-1. Make changes in `src/database/seeds/relational/user/user-seed.module.ts`:
+1. 在 `src/core/database/seeds/relational/user/user-seed.module.ts` 中进行更改：
 
     ```ts
     import { Module } from '@nestjs/common';
@@ -228,7 +228,7 @@ npm run seed:run:relational
     import { UserFactory } from './user.factory';
 
     import { UserEntity } from '../../../../users/infrastructure/persistence/relational/entities/user.entity';
-    import { RoleEntity } from '../../../../roles/infrastructure/persistence/relational/entities/role.entity';
+    import { RoleEntity } from '@modules/roles/infrastructure/persistence/relational/entities/role.entity';
     import { StatusEntity } from '../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
 
     @Module({
@@ -240,7 +240,7 @@ npm run seed:run:relational
 
     ```
 
-1. Run seed:
+1. 运行 seed：
 
     ```bash
     npm run seed:run
@@ -248,16 +248,16 @@ npm run seed:run:relational
 
 ---
 
-## Seeding (Mongoose)
+## 数据填充 (Mongoose)
 
-### Creating seeds (Mongoose)
+### 创建 Seeds (Mongoose)
 
-1. Create seed file with `npm run seed:create:document -- --name Post`. Where `Post` is name of entity.
-1. Go to `src/database/seeds/document/post/post-seed.service.ts`.
-1. In `run` method extend your logic.
-1. Run [npm run seed:run:document](#run-seed-mongoose)
+1. 使用 `npm run seed:create:document -- --name Post` 创建 seed 文件。其中 `Post` 是实体名称。
+1. 转到 `src/core/database/seeds/document/post/post-seed.service.ts`。
+1. 在 `run` 方法中扩展您的逻辑。
+1. 运行 [npm run seed:run:document](#run-seed-mongoose)
 
-### Run seed (Mongoose)
+### 运行 Seed (Mongoose)
 
 ```bash
 npm run seed:run:document
@@ -265,46 +265,46 @@ npm run seed:run:document
 
 ---
 
-## Performance optimization (PostgreSQL + TypeORM)
+## 性能优化 (PostgreSQL + TypeORM)
 
-### Indexes and Foreign Keys
+### 索引和外键
 
-Don't forget to create `indexes` on the Foreign Keys (FK) columns (if needed), because by default PostgreSQL [does not automatically add indexes to FK](https://stackoverflow.com/a/970605/18140714).
+不要忘记在外键 (FK) 列上创建 `indexes` (索引)（如果需要），因为默认情况下 PostgreSQL [不会自动向 FK 添加索引](https://stackoverflow.com/a/970605/18140714)。
 
-### Max connections
+### 最大连接数
 
-Set the optimal number of [max connections](https://node-postgres.com/apis/pool) to database for your application in `/.env`:
+在 `/.env` 中为您的应用程序设置数据库的最佳 [最大连接数](https://node-postgres.com/apis/pool)：
 
 ```txt
 DATABASE_MAX_CONNECTIONS=100
 ```
 
-You can think of this parameter as how many concurrent database connections your application can handle.
+您可以将此参数视为您的应用程序可以处理多少个并发数据库连接。
 
-## Performance optimization (MongoDB + Mongoose)
+## 性能优化 (MongoDB + Mongoose)
 
-### Design schema
+### 设计模式
 
-Designing schema for MongoDB is completely different from designing schema for relational databases. For best performance, you should design your schema according to:
+为 MongoDB 设计模式与为关系型数据库设计模式完全不同。为了获得最佳性能，您应该根据以下内容设计您的模式：
 
-1. [MongoDB Schema Design Anti-Patterns](https://www.mongodb.com/developer/products/mongodb/schema-design-anti-pattern-massive-arrays)
-1. [MongoDB Schema Design Best Practices](https://www.mongodb.com/developer/products/mongodb/mongodb-schema-design-best-practices/)
+1. [MongoDB 模式设计反模式](https://www.mongodb.com/developer/products/mongodb/schema-design-anti-pattern-massive-arrays)
+1. [MongoDB 模式设计最佳实践](https://www.mongodb.com/developer/products/mongodb/mongodb-schema-design-best-practices/)
 
-## Switch PostgreSQL to MySQL
+## 将 PostgreSQL 切换为 MySQL
 
-If you want to use `MySQL` instead of `PostgreSQL`, you can make the changes after following the complete guide given [here](installing-and-running.md).
+如果您想使用 `MySQL` 而不是 `PostgreSQL`，您可以在按照 [此处](installing-and-running.md) 给出的完整指南进行操作后进行更改。
 
-Once you have completed all the steps, you should have a running app.
+完成所有步骤后，您应该有一个正在运行的应用程序。
 ![image](https://github.com/user-attachments/assets/ec60b61a-65e6-43e2-9bcf-72dad4c8a9fa)
 
-If you've made it this far, it only requires a few changes to switch from `PostgreSQL` to `MySQL`.
+如果您已经做到了这一步，只需要做一些更改即可从 `PostgreSQL` 切换到 `MySQL`。
 
-**Change the `.env` file to the following:**
+**将 `.env` 文件更改为以下内容：**
 
 ```env
 DATABASE_TYPE=mysql
-# set "localhost" if you are running app on local machine
-# set "mysql" if you are running app on docker
+# 如果您在本地机器上运行应用程序，请设置为 "localhost"
+# 如果您在 docker 上运行应用程序，请设置为 "mysql"
 DATABASE_HOST=localhost
 DATABASE_PORT=3306
 DATABASE_USERNAME=root
@@ -312,7 +312,7 @@ DATABASE_PASSWORD=secret
 DATABASE_NAME=app
 ```
 
-**Change the `docker-compose.yml` to the following:**
+**将 `docker-compose.yml` 更改为以下内容：**
 
 ```yml
 services:
@@ -328,70 +328,70 @@ services:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_DATABASE: ${DATABASE_NAME}
 
-  # other services here...
+  # 其他服务...
 
 volumes:
-  # other volumes here...
+  # 其他卷...
   mysql-boilerplate-db:
 ```
 
-After completing the above setup, run Docker with the following command:
+完成上述设置后，使用以下命令运行 Docker：
 
 ```bash
 docker compose up -d mysql adminer maildev
 ```
 
-All three services should be running as shown below:
+所有三个服务都应该如下所示运行：
 
 ![image](https://github.com/user-attachments/assets/73e10325-66ed-46ca-a0c5-45791ef0750f)
 
-Once your services are up and running, you're almost halfway through.
+一旦您的服务启动并运行，您就快完成一半了。
 
-Now install the MySQL client:
+现在安装 MySQL 客户端：
 
 ```bash
 npm i mysql2 --save
 ```
 
-**Delete the existing migration file and generate a new one with the following script:**
+**删除现有的迁移文件，并使用以下脚本生成一个新的迁移文件：**
 
 ```bash
-npm run migration:generate -- src/database/migrations/newMigration --pretty=true
+npm run migration:generate -- src/core/database/migrations/newMigration --pretty=true
 ```
 
-Run migrations:
+运行迁移：
 
 ```bash
 npm run migration:run
 ```
 
-Run seeds:
+运行 seeds：
 
 ```bash
 npm run seed:run:relational
 ```
 
-Run the app in dev mode:
+以开发模式运行应用程序：
 
 ```bash
 npm run start:dev
 ```
 
-Open <http://localhost:3000>
+打开 <http://localhost:3000>
 
-To set up Adminer:
+要设置 Adminer：
 
-Open the running port in your browser.
-Open <http://localhost:8080>
+在浏览器中打开运行端口。
+打开 <http://localhost:8080>
 
 ![image](https://github.com/user-attachments/assets/f4b86daa-d93f-4ae9-a9e3-3c29bb3bba9d)
 
-Running App:
+运行中的应用程序：
 ![image](https://github.com/user-attachments/assets/5dc0609d-5f6d-4176-918d-1744906f4f88)
 ![image](https://github.com/user-attachments/assets/ff2201a6-d834-4c8b-9ab7-b9413a0a95c1)
 
 ---
 
-Previous: [Command Line Interface](cli.md)
+上一页: [命令行工具 (CLI)](cli.md)
 
-Next: [Auth](auth.md)
+下一页: [认证](auth.md)

@@ -1,14 +1,14 @@
 ---
 to: src/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/infrastructure/persistence/<%= h.inflection.transform(name, ['underscore', 'dasherize']) %>.repository.ts
 ---
-import { DeepPartial } from '../../../utils/types/deep-partial.type';
-import { NullableType } from '../../../utils/types/nullable.type';
-import { IPaginationOptions } from '../../../utils/types/pagination-options';
+import { DeepPartial } from '@shared/types/deep-partial.type';
+import { NullableType } from '@shared/types/nullable.type';
+import { IPaginationOptions } from '@shared/types/pagination-options';
 import { <%= name %> } from '../../domain/<%= h.inflection.transform(name, ['underscore', 'dasherize']) %>';
 
 export abstract class <%= name %>Repository {
   abstract create(
-    data: Omit<<%= name %>, 'id' | 'createdAt' | 'updatedAt'>,
+    data: Omit<<%= name %>, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
   ): Promise<<%= name %>>;
 
   abstract findAllWithPagination({
@@ -26,5 +26,5 @@ export abstract class <%= name %>Repository {
     payload: DeepPartial<<%= name %>>,
   ): Promise<<%= name %> | null>;
 
-  abstract remove(id: <%= name %>['id']): Promise<void>;
+  abstract delete(id: <%= name %>['id']): Promise<void>;
 }

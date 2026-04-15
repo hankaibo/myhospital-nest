@@ -27,8 +27,8 @@ import { AuthGuard } from '@nestjs/passport';
 import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
-} from '../utils/dto/infinity-pagination-response.dto';
-import { infinityPagination } from '../utils/infinity-pagination';
+} from '@shared/dto/infinity-pagination-response.dto';
+import { infinityPagination } from '@shared/infinity-pagination';
 import { FindAll<%= h.inflection.transform(name, ['pluralize']) %>Dto } from './dto/find-all-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>.dto';
 
 @ApiTags('<%= h.inflection.transform(name, ['pluralize', 'humanize']) %>')
@@ -108,7 +108,7 @@ export class <%= h.inflection.transform(name, ['pluralize']) %>Controller {
     type: String,
     required: true,
   })
-  remove(@Param('id') id: string) {
-    return this.<%= h.inflection.camelize(h.inflection.pluralize(name), true) %>Service.remove(id);
+  delete(@Param('id') id: string) {
+    return this.<%= h.inflection.camelize(h.inflection.pluralize(name), true) %>Service.delete(id);
   }
 }

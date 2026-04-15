@@ -1,6 +1,6 @@
-# Test benchmarking
+# 基准测试
 
-## Table of Contents <!-- omit in toc -->
+## 目录 <!-- omit in toc -->
 
 - [Apache Benchmark](#apache-benchmark)
 
@@ -12,6 +12,6 @@ docker run --rm jordi/ab -n 100 -c 100 -T application/json -H "Authorization: Be
 
 ---
 
-Previous: [Tests](tests.md)
+上一篇：[测试](tests.md)
 
-Next: [Automatic update of dependencies](automatic-update-dependencies.md)
+下一篇：[自动更新依赖](automatic-update-dependencies.md)

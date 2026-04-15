@@ -14,4 +14,7 @@ export class <%= name %> {
 
   @ApiProperty()
   updatedAt: Date;
+
+  @ApiProperty()
+  deletedAt: Date;
 }

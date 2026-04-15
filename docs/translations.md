@@ -1,30 +1,30 @@
-# Translations
+# 翻译 (国际化)
 
-## Table of Contents <!-- omit in toc -->
+## 目录 <!-- omit in toc -->
 
-- [How to add a new translation](#how-to-add-a-new-translation)
-- [How to use translations on frontend](#how-to-use-translations-on-frontend)
-- [How to use translations in code](#how-to-use-translations-in-code)
+- [如何添加新翻译](#如何添加新翻译)
+- [如何在前端使用翻译](#如何在前端使用翻译)
+- [如何在代码中使用翻译](#如何在代码中使用翻译)
 
-## How to add a new translation
+## 如何添加新翻译
 
-1. Copy the `en` folder and rename it to the language you are adding.
-2. Translate files in the new folder.
+1. 复制 `en` 文件夹并将其重命名为您要添加的语言。
+2. 翻译新文件夹中的文件。
 
-## How to use translations on frontend
+## 如何在前端使用翻译
 
-1. Add header `x-custom-lang` to the request with the language you want to use.
+1. 在请求中添加带有您要使用的语言的 `x-custom-lang` 标头。
 
-## How to use translations in code
+## 如何在代码中使用翻译
 
 ```typescript
 import { I18nContext } from 'nestjs-i18n';
 
-// code ...
+// 代码 ...
 
 @Injectable()
 export class SomeService {
-  // code ...
+  // 代码 ...
 
   async someMethod(): Promise<void> {
     const i18n = I18nContext.current();
@@ -35,11 +35,11 @@ export class SomeService {
 
     const emailConfirmTitle = await i18n.t('common.confirmEmail');
 
-    // code ...
+    // 代码 ...
   }
 }
 ```
 
 ---
 
-Previous: [Automatic update of dependencies](automatic-update-dependencies.md)
+上一篇：[自动更新依赖](automatic-update-dependencies.md)

@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   PrimaryGeneratedColumn,
@@ -118,9 +119,9 @@ export class HospitalEntity extends EntityRelationalHelper {
   @Column({
     name: 'address_key',
     type: 'text',
-    insert: false,
-    update: false,
-    select: false,
+    asExpression:
+      "COALESCE(UPPER(TRIM(REGEXP_REPLACE(address, '[[:space:]]+', ' ', 'g'))), '')",
+    generatedType: 'STORED',
   })
   addressKey: string;
 
@@ -129,4 +130,7 @@ export class HospitalEntity extends EntityRelationalHelper {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt: Date | null;
 }

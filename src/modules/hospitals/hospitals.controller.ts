@@ -190,8 +190,8 @@ export class HospitalsController {
   @Delete(':id')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  remove(@Param('id') id: string) {
-    return this.hospitalsService.remove(id);
+  delete(@Param('id') id: string) {
+    return this.hospitalsService.delete(id);
   }
 
   // #region
@@ -231,11 +231,19 @@ export class HospitalsController {
   })
   @ApiBearerAuth()
   // #endregion
+  @Post('sync/staging/full')
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @HttpCode(HttpStatus.OK)
+  fullSyncStaging(@Query() query: SyncStagingHospitalsDto) {
+    return this.hospitalsService.fullSyncStaging(query);
+  }
+
   @Post('sync/staging')
   @Roles(RoleEnum.admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @HttpCode(HttpStatus.OK)
-  syncStaging(@Query() query: SyncStagingHospitalsDto) {
-    return this.hospitalsService.syncStaging(query);
+  incrementalSyncStaging(@Query() query: SyncStagingHospitalsDto) {
+    return this.hospitalsService.incrementalSyncStaging(query);
   }
 }

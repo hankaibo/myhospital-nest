@@ -43,7 +43,7 @@ export abstract class HospitalRepository {
     payload: Partial<Hospital>,
   ): Promise<Hospital>;
 
-  abstract remove(id: Hospital['id']): Promise<void>;
+  abstract delete(id: Hospital['id']): Promise<void>;
 
   abstract copy(id: Hospital['id']): Promise<Hospital>;
 

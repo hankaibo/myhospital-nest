@@ -137,8 +137,8 @@ export class HospitalsService {
     });
   }
 
-  remove(id: Hospital['id']) {
-    return this.hospitalRepository.remove(id);
+  delete(id: Hospital['id']) {
+    return this.hospitalRepository.delete(id);
   }
 
   copy(id: Hospital['id']) {
@@ -149,7 +149,11 @@ export class HospitalsService {
     return this.hospitalRepository.copyAll(separator);
   }
 
-  async syncStaging(syncDto: SyncStagingHospitalsDto) {
-    return await this.hospitalStagingSyncService.sync(syncDto);
+  async fullSyncStaging(syncDto: SyncStagingHospitalsDto) {
+    return await this.hospitalStagingSyncService.fullSync(syncDto);
+  }
+
+  async incrementalSyncStaging(syncDto: SyncStagingHospitalsDto) {
+    return await this.hospitalStagingSyncService.incrementalSync(syncDto);
   }
 }

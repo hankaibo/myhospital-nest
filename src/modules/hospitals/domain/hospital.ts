@@ -75,4 +75,7 @@ export class Hospital {
 
   @ApiProperty()
   updatedAt: Date;
+
+  @ApiProperty({ type: Date, nullable: true })
+  deletedAt?: Date | null;
 }

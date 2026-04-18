@@ -148,7 +148,7 @@ export class HospitalRelationalRepository implements HospitalRepository {
     return HospitalMapper.toDomain(updatedEntity);
   }
 
-  async remove(id: Hospital['id']): Promise<void> {
+  async delete(id: Hospital['id']): Promise<void> {
     await this.hospitalRepository.delete(id);
   }
 

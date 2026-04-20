@@ -78,17 +78,7 @@ const HOSPITAL_UPSERT_SQL = `
     deleted_at = NULL
 `;
 
-const CHRONIC_DISEASE_DELETE_SQL = `
-  DELETE FROM hospital_chronic_disease
-  WHERE institution_code IN (
-    SELECT DISTINCT s.normalized_payload->>'institution_code'
-    FROM staging_hospital_raw s
-    WHERE s.id = ANY($1)
-      AND s.normalized_payload->>'institution_code' IS NOT NULL
-  )
-`;
-
-const CHRONIC_DISEASE_INSERT_SQL = `
+const CHRONIC_DISEASE_UPSERT_SQL = `
   INSERT INTO hospital_chronic_disease (institution_code, disease_code, disease_name)
   SELECT DISTINCT ON (s.normalized_payload->>'institution_code', d->>'disease_code')
     s.normalized_payload->>'institution_code',
@@ -101,6 +91,8 @@ const CHRONIC_DISEASE_INSERT_SQL = `
     AND jsonb_typeof(s.normalized_payload->'chronic_diseases') = 'array'
     AND d->>'disease_code' IS NOT NULL
     AND d->>'disease_code' != ''
+  ON CONFLICT (institution_code, disease_code)
+  DO UPDATE SET disease_name = EXCLUDED.disease_name
 `;
 
 const GEOCODING_UPSERT_SQL = `
@@ -120,6 +112,7 @@ const GEOCODING_UPSERT_SQL = `
   FROM staging_hospital_raw s
   JOIN hospital h ON h.institution_code = s.normalized_payload->>'institution_code'
     AND h.address_key = COALESCE(UPPER(TRIM(REGEXP_REPLACE(s.normalized_payload->>'address', '\\s+', ' ', 'g'))), '')
+    AND h.deleted_at IS NULL
   WHERE s.id = ANY($1)
     AND (
       s.normalized_payload->>'geocoding_confidence' IS NOT NULL
@@ -179,20 +172,17 @@ export class StagingHospitalRawRelationalRepository implements StagingHospitalRa
     chunkSize?: number;
   }): Promise<StagingSyncResult> {
     const chunkSize = options.chunkSize ?? 1000;
+    const maxIterations = Math.ceil(1000000 / chunkSize);
     const result: StagingSyncResult = { selected: 0, synced: 0, failed: 0 };
-    let offset = 0;
-    let hasMore = true;
 
-    while (hasMore) {
+    for (let i = 0; i < maxIterations; i++) {
       const stagingIds = await this.selectPendingIds(
         ['pending'],
         options.batchId,
         chunkSize,
-        offset,
       );
 
       if (stagingIds.length === 0) {
-        hasMore = false;
         break;
       }
 
@@ -201,15 +191,13 @@ export class StagingHospitalRawRelationalRepository implements StagingHospitalRa
       result.synced += chunkResult.synced;
       result.failed += chunkResult.failed;
 
-      if (stagingIds.length < chunkSize) {
-        hasMore = false;
-      } else {
-        offset += chunkSize;
-      }
-
       this.logger.log(
         `fullSync progress: selected=${result.selected}, synced=${result.synced}, failed=${result.failed}`,
       );
+
+      if (stagingIds.length < chunkSize) {
+        break;
+      }
     }
 
     return result;
@@ -227,7 +215,6 @@ export class StagingHospitalRawRelationalRepository implements StagingHospitalRa
       statuses,
       options.batchId,
       limit,
-      0,
     );
 
     if (stagingIds.length === 0) {
@@ -247,12 +234,11 @@ export class StagingHospitalRawRelationalRepository implements StagingHospitalRa
     statuses: string[],
     batchId: string | undefined,
     limit: number,
-    offset: number,
   ): Promise<string[]> {
-    const params: unknown[] = [statuses, limit, offset];
+    const params: unknown[] = [statuses, limit];
     let batchFilter = '';
     if (batchId) {
-      batchFilter = 'AND crawl_batch_id = $4';
+      batchFilter = 'AND crawl_batch_id = $3';
       params.push(batchId);
     }
 
@@ -260,7 +246,7 @@ export class StagingHospitalRawRelationalRepository implements StagingHospitalRa
       `SELECT id FROM staging_hospital_raw
        WHERE sync_status = ANY($1) ${batchFilter}
        ORDER BY id ASC
-       LIMIT $2 OFFSET $3`,
+       LIMIT $2`,
       params,
     );
 
@@ -284,8 +270,7 @@ export class StagingHospitalRawRelationalRepository implements StagingHospitalRa
     try {
       await this.dataSource.transaction(async (manager) => {
         await manager.query(HOSPITAL_UPSERT_SQL, [validIds]);
-        await manager.query(CHRONIC_DISEASE_DELETE_SQL, [validIds]);
-        await manager.query(CHRONIC_DISEASE_INSERT_SQL, [validIds]);
+        await manager.query(CHRONIC_DISEASE_UPSERT_SQL, [validIds]);
         await manager.query(GEOCODING_UPSERT_SQL, [validIds]);
         await manager.query(MARK_SYNCED_SQL, [validIds]);
       });
@@ -314,8 +299,7 @@ export class StagingHospitalRawRelationalRepository implements StagingHospitalRa
       try {
         await this.dataSource.transaction(async (manager) => {
           await manager.query(HOSPITAL_UPSERT_SQL, [[id]]);
-          await manager.query(CHRONIC_DISEASE_DELETE_SQL, [[id]]);
-          await manager.query(CHRONIC_DISEASE_INSERT_SQL, [[id]]);
+          await manager.query(CHRONIC_DISEASE_UPSERT_SQL, [[id]]);
           await manager.query(GEOCODING_UPSERT_SQL, [[id]]);
           await manager.query(MARK_SYNCED_SQL, [[id]]);
         });
@@ -362,7 +346,7 @@ export class StagingHospitalRawRelationalRepository implements StagingHospitalRa
          AND NOT EXISTS (
            SELECT 1 FROM staging_hospital_raw s
            WHERE s.crawl_batch_id = $2
-             AND s.institution_code = hospital.institution_code
+             AND s.normalized_payload->>'institution_code' = hospital.institution_code
              AND COALESCE(UPPER(TRIM(REGEXP_REPLACE(s.normalized_payload->>'address', '\\s+', ' ', 'g'))), '') = hospital.address_key
              AND s.sync_status = 'synced'
          )`,

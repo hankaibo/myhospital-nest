@@ -18,6 +18,9 @@ import { EntityRelationalHelper } from '../../../../../../shared/utils/relationa
     unique: true,
   },
 )
+@Index('idx_hospital_region_code', ['regionCode'])
+@Index('idx_hospital_deleted_at', ['deletedAt'])
+@Index('idx_hospital_name', ['name'])
 export class HospitalEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn('uuid')
   id: string;

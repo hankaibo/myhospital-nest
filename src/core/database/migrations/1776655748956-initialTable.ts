@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InitialTable1776218301340 implements MigrationInterface {
-  name = 'InitialTable1776218301340';
+export class InitialTable1776655748956 implements MigrationInterface {
+  name = 'InitialTable1776655748956';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -41,7 +41,27 @@ export class InitialTable1776218301340 implements MigrationInterface {
       `CREATE INDEX "idx_staging_hospital_raw_crawled_at" ON "staging_hospital_raw" ("crawled_at") `,
     );
     await queryRunner.query(
-      `CREATE TABLE "hospital" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "institution_code" character varying(30) NOT NULL, "name" character varying(255) NOT NULL, "type_code" character varying(20), "type_name" character varying(100), "level_code" character varying(10), "level_name" character varying(50), "hospital_grade_code" character varying(10), "address" text, "region_code" character varying(20), "city" character varying(50), "district" character varying(50), "lat" numeric(12,8), "lng" numeric(12,8), "lng_lat" geography(Point,4326), "social_credit_code" character varying(30), "nature" character varying(10), "electronic_insurance_enabled" boolean, "business_capability_levels" jsonb, "zip_code" character varying(10), "introduction" text, "source_method" character varying(20) NOT NULL DEFAULT 'api', "raw_payload" jsonb, "address_valid" boolean NOT NULL DEFAULT true, "address_key" text NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_10f19e0bf17ded693ea0da07d95" PRIMARY KEY ("id"))`,
+      `INSERT INTO "typeorm_metadata"("database", "schema", "table", "type", "name", "value") VALUES ($1, $2, $3, $4, $5, $6)`,
+      [
+        'postgres',
+        'public',
+        'hospital',
+        'GENERATED_COLUMN',
+        'address_key',
+        "COALESCE(UPPER(TRIM(REGEXP_REPLACE(address, '[[:space:]]+', ' ', 'g'))), '')",
+      ],
+    );
+    await queryRunner.query(
+      `CREATE TABLE "hospital" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "institution_code" character varying(30) NOT NULL, "name" character varying(255) NOT NULL, "type_code" character varying(20), "type_name" character varying(100), "level_code" character varying(10), "level_name" character varying(50), "hospital_grade_code" character varying(10), "address" text, "region_code" character varying(20), "city" character varying(50), "district" character varying(50), "lat" numeric(12,8), "lng" numeric(12,8), "lng_lat" geography(Point,4326), "social_credit_code" character varying(30), "nature" character varying(10), "electronic_insurance_enabled" boolean, "business_capability_levels" jsonb, "zip_code" character varying(10), "introduction" text, "source_method" character varying(20) NOT NULL DEFAULT 'api', "raw_payload" jsonb, "address_valid" boolean NOT NULL DEFAULT true, "address_key" text GENERATED ALWAYS AS (COALESCE(UPPER(TRIM(REGEXP_REPLACE(address, '[[:space:]]+', ' ', 'g'))), '')) STORED NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, CONSTRAINT "PK_10f19e0bf17ded693ea0da07d95" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_hospital_name" ON "hospital" ("name") `,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_hospital_deleted_at" ON "hospital" ("deleted_at") `,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_hospital_region_code" ON "hospital" ("region_code") `,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "uq_hospital_institution_code_address_key" ON "hospital" ("institution_code", "address_key") `,
@@ -106,7 +126,14 @@ export class InitialTable1776218301340 implements MigrationInterface {
     await queryRunner.query(
       `DROP INDEX "public"."uq_hospital_institution_code_address_key"`,
     );
+    await queryRunner.query(`DROP INDEX "public"."idx_hospital_region_code"`);
+    await queryRunner.query(`DROP INDEX "public"."idx_hospital_deleted_at"`);
+    await queryRunner.query(`DROP INDEX "public"."idx_hospital_name"`);
     await queryRunner.query(`DROP TABLE "hospital"`);
+    await queryRunner.query(
+      `DELETE FROM "typeorm_metadata" WHERE "type" = $1 AND "name" = $2 AND "database" = $3 AND "schema" = $4 AND "table" = $5`,
+      ['GENERATED_COLUMN', 'address_key', 'postgres', 'public', 'hospital'],
+    );
     await queryRunner.query(
       `DROP INDEX "public"."idx_staging_hospital_raw_crawled_at"`,
     );

@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   Max,
   Min,
 } from 'class-validator';
@@ -36,6 +37,9 @@ export class SyncStagingHospitalsDto {
   })
   @IsOptional()
   @IsString()
+  @Matches(/^[0-9]{2,6}$/, {
+    message: 'regionCode must be 2-6 digits',
+  })
   regionCode?: string;
 
   @ApiPropertyOptional({ default: 1000 })

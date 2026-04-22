@@ -10,16 +10,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: 10
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '24'
           cache: 'pnpm'
-      - name: Enable corepack
-        run: corepack enable
 
       - name: Install dependencies
-        run: pnpm install # <-- 依赖安装在 CI 机器上完成
+        run: pnpm install --frozen-lockfile# <-- 依赖安装在 CI 机器上完成
 
       - name: Build application
         run: pnpm run build

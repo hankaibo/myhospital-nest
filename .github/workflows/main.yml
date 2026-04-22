@@ -1,0 +1,92 @@
+name: NestJS API Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install # <-- 依赖安装在 CI 机器上完成
+
+      - name: Build application
+        run: pnpm run build
+
+      - name: Create PM2 config
+        run: |
+          cat > ecosystem.config.cjs << EOL
+          module.exports = {
+            apps: [{
+              name: "myhospital-nestjs",
+              script: "dist/main.js",
+              node_args: "--max-old-space-size=256",
+
+              instances: 1,
+              exec_mode: 'fork',
+              watch: false,
+              ignore_watch: ["node_modules", "logs"],
+              max_memory_restart: "256M",
+              env_file: ".env",
+
+              log_date_format: "YYYY-MM-DD HH:mm:ss",
+              error_file: "./logs/nestjs-error.log",
+              out_file: "./logs/nestjs-out.log",
+              merge_logs: true,
+
+              listen_timeout: 10000,
+              kill_timeout: 5000,
+              wait_ready: true,
+              max_restarts: 10,
+              restart_delay: 5000
+            }]
+          }
+          EOL
+
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          # 【修改 1】移除 --exclude="node_modules/"，确保依赖文件夹被传输
+          ARGS: '-rlgoDzvc -i --delete --exclude=".env" --exclude="logs/"'
+          # 【修改 2】SOURCE 中添加 node_modules/ 目录
+          SOURCE: 'dist node_modules src tsconfig.json package.json pnpm-lock.yaml ecosystem.config.cjs'
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+
+      - name: Setup PM2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            source ~/.nvmrc-setup.sh
+
+            cd ${{ secrets.REMOTE_TARGET }}
+            
+            # 【修改 3】移除 pnpm install，消除 I/O 冲击源
+            # pnpm install 
+            
+            mkdir -p ./logs
+
+            npm run migration:run
+            
+            # 【修改 4】使用 pm2 reload 替代 delete/start，实现零停机部署。
+            # pm2 reload 优先重载 (平滑替换)，如果进程不存在则执行 start。
+            pm2 reload myhospital-nestjs --update-env || pm2 start ecosystem.config.cjs
+            pm2 save
+          

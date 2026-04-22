@@ -1,4 +1,24 @@
 {
   "markdown.extension.toc.levels": "2..6",
-  "markdown.extension.orderedList.autoRenumber": false
+  "markdown.extension.orderedList.autoRenumber": false,
+  "maptz.regionfolder": {
+    "collapseDefaultRegionsOnOpen": true,
+    // 针对 TypeScript 语言设置 (如果您在其他语言中使用，也需要添加)
+    "[typescript]": {
+      // ----------------------------------------------------
+      // 1. 生成模板 (使用块注释)
+      // ----------------------------------------------------
+      "foldStart": "// #region [NAME]", // 关键：使用块注释模板
+      "foldEnd": "// #endregion", // 关键：使用块注释模板
+      // ----------------------------------------------------
+      // 2. 识别规则 (匹配块注释)
+      // ----------------------------------------------------
+      "foldStartRegex": "^[\\s]*\\/\\\/[\\s]*#region[\\s]*(.*)",
+      "foldEndRegex": "^[\\s]*\\/\\\/[\\s]*#endregion[\\s]*(.*)",
+      // ----------------------------------------------------
+      // 3. 默认折叠规则（匹配块注释）
+      // ----------------------------------------------------
+      "defaultFoldStartRegex": "^[\\s]*\\/\\\/[\\s]*#region[\\s]*(.*)"
+    }
+  }
 }

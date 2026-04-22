@@ -22,7 +22,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile# <-- 依赖安装在 CI 机器上完成
+        run: pnpm install --frozen-lockfile # <-- 依赖安装在 CI 机器上完成
 
       - name: Build application
         run: pnpm run build
